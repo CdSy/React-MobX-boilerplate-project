@@ -1,21 +1,19 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { inject, observer } from 'mobx-react';
+import MenuButton from './MenuButton';
 import './style.css';
 
-const Header = () => {
+@inject("uiStore")
+@observer
+class Header extends Component {
+  render() {
     return (
-        <header className="App-header">
-            <h1 className="App-title">Welcome to React</h1>
-            <ul>
-                <li>
-                    <Link to='/table'>Table</Link>
-                </li>
-                <li>
-                    <Link to='/list'>List</Link> 
-                </li>
-            </ul>
-        </header>
-    );
+      <header className="b-header">
+        <MenuButton isActive={this.props.uiStore.menuIsOpen} clickHandler={this.props.uiStore.stateMenuToogle}/>
+        <div>Sing In</div>
+      </header>
+    )
+  }
 }
 
 export default Header;

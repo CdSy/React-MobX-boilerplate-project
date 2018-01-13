@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
 import Header from './components/Header';
 import Main from './components/Main';
+import Menu from './components/Menu';
 
 class App extends Component {
+  componentWillMount = () => {
+    document.body.classList.add('light');
+  }
+  
   render() {
     return (
       <div className="App">
         <Header/>
-        <Main/>
+        <div className="app-body">
+          <Menu/>
+          <Main/>
+        </div>
       </div>
     );
   }

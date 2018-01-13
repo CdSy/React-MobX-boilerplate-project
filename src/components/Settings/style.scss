@@ -1,0 +1,50 @@
+.p-themes-wrapper {
+    display: flex;
+}
+
+.b-theme-card {
+    width: 120px;
+    height: 185px;
+    margin: 0 30px;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 1px 1px 6px 0 rgba(10,10,10,0.2);
+    opacity: 0.5;
+    overflow: hidden;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+
+    .color {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 120px;
+
+        &.light {background-color: rgb(218, 212, 212);}
+        &.dark {background-color: rgb(36, 32, 32);}
+        &.green {background-color: rgb(201, 120, 67);}
+        &.blue {background-color: rgb(133, 95, 238);}
+    }
+
+    .icon {
+        width: 3em;
+        height: 3em;
+        opacity: 0;
+        color: #fff;
+        transition: opacity 0.3s ease;
+    }
+
+    .name {
+        padding: 20px;
+        background-color: #fff;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    &.active {
+        opacity: 1;
+
+        .icon {
+            opacity: 1;
+        }
+    }
+}

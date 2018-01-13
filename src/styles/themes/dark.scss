@@ -1,0 +1,44 @@
+body.dark {
+    .b-sidebar-menu {
+        background-color: rgb(36, 32, 32);
+        box-shadow: 1px 0px 6px 0 rgba(0, 0, 0, 0.2);
+    
+        .item {
+            a,
+            .icon {
+                color: #fff;
+            }
+
+            &.active {
+                box-shadow: 0 0 0 1px #fff;
+            }
+        }
+
+        .toggle-button .icon {
+            color: #fff;
+        }
+    }
+    
+    .b-header {
+        background-color: rgb(36, 32, 32);
+        box-shadow: 0px 1px 6px 0 rgba(0, 0, 0,0.2);
+    }
+    
+    .b-menu-toggle {
+        .path-rotation {
+            &:before {
+                background: #fff;
+            }
+        }
+    
+        .burger-bun-top,
+        .burger-bun-bot,
+        .burger-filling {
+            background: #fff;
+        }
+    
+        .svg-ring .path {
+            stroke: #fff;
+        }
+    }
+}

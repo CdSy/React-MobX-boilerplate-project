@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter as Router} from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory';
 import { Provider } from 'mobx-react';
 import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
 
-import './index.css';
+import './styles/index.css';
+import 'normalize.css/normalize.css';
 import registerServiceWorker from './registerServiceWorker';
 import App from './App';
 import RootStore from './store';

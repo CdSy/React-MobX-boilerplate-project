@@ -1,9 +1,34 @@
-import { observable, computed } from "mobx";
+import { observable, computed, action } from "mobx";
 
 export default class UiStore {
-    @observable menuIsOpen = false;
+    @observable menuOpen = false;
+    @observable menuNarrow = false;
+    @observable currentTheme = "light";
+    themeList = ["light","dark","green","blue"];
 
-    @computed get isOpen() {
-        return this.menuIsOpen;
+    @computed get menuIsOpen() {
+        return this.menuOpen;
+    }
+
+    @action.bound
+    stateMenuToogle() {
+        this.menuOpen = !this.menuOpen;
+    }
+
+    @computed get menuIsNarrow() {
+        return this.menuNarrow;
+    }
+
+    @action.bound
+    widthMenuToggle() {
+        this.menuNarrow = !this.menuNarrow;
+    }
+
+    @action.bound
+    changeTheme(theme) {
+        this.currentTheme = theme;
+
+        document.body.classList= '';
+        document.body.classList.add(this.currentTheme);
     }
 }
