@@ -9,10 +9,9 @@ class Menu extends Component {
   render() {
     const { location } = this.props.routing;
     const path = location.pathname.slice(1);
-    console.log(path);
 
     return (
-      <div className={`b-sidebar-menu ${this.props.uiStore.menuIsOpen ? 'open' : 'close'}
+      <div className={`b-sidebar-menu ${this.props.uiStore.menuIsOpen ? 'open' : 'closed'}
         ${this.props.uiStore.menuIsNarrow ? 'narrow' : 'wide'}
       `}>
         <ul className="list">

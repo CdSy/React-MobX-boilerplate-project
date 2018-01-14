@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .b-sidebar-menu {
     position: relative;
     width: 230px;
@@ -5,7 +7,7 @@
     background-color: #fff;
     box-sizing: border-box;
     overflow: hidden;
-    transition: width 0.3s ease;
+    transition: width 0.3s ease, background-color $transition-time $ease-func;
 
     .list {
         width: 230px;
@@ -65,7 +67,7 @@
         }
     }
 
-    &.close {
+    &.closed {
         width: 0;
     }
 }

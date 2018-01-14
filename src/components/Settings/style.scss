@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .p-themes-wrapper {
     display: flex;
 }
@@ -19,10 +21,10 @@
         align-items: center;
         height: 120px;
 
-        &.light {background-color: rgb(218, 212, 212);}
-        &.dark {background-color: rgb(36, 32, 32);}
-        &.green {background-color: rgb(201, 120, 67);}
-        &.blue {background-color: rgb(133, 95, 238);}
+        &.light {background-color: darken($light-accent-color, 5%);}
+        &.dark {background-color: $dark-accent-color;}
+        &.green {background-color: $green-accent-color;}
+        &.blue {background-color: $blue-accent-color;}
     }
 
     .icon {
