@@ -1,20 +1,31 @@
-import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import React, { Component } from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { inject } from 'mobx-react';
 import Settings from '../Settings';
 import Callback from '../Callback';
 import Home from '../Home';
-// import Profile from '../Profile';
+import UserProfile from '../Profile';
 
-const Main = () => {
-    return (
-        <div className="p-content-section">
-            <Switch>
-                <Route exact path='/' component={Home}/>
-                <Route path='/settings' component={Settings}/>
-                <Route path='/callback' component={Callback}/>
-            </Switch>
-        </div>
-    );
+@inject("auth")
+class Main extends Component {
+    render() {
+        return (
+            <div className="p-content-section">
+                <Switch>
+                    <Route exact path='/' component={Home}/>
+                    <Route path="/profile" render={(props) => (
+                        !this.props.auth.isAuthenticated ? (
+                        <Redirect to="/"/>
+                        ) : (
+                        <UserProfile {...props} />
+                        )
+                    )} />
+                    <Route path='/settings' component={Settings}/>
+                    <Route path='/callback' component={Callback}/>
+                </Switch>
+            </div>
+        );
+    }
 }
 
 export default Main;

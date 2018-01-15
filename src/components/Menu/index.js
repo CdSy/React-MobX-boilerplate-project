@@ -11,26 +11,31 @@ class Menu extends Component {
     const path = location.pathname.slice(1);
 
     return (
-      <div className={`b-sidebar-menu ${this.props.uiStore.menuIsOpen ? 'open' : 'closed'}
-        ${this.props.uiStore.menuIsNarrow ? 'narrow' : 'wide'}
-      `}>
-        <ul className="list">
-          <li className={`item ${path === 'profile' ? 'active' : ''}`}>
-            <Link to='/profile'>
-              <i className="fas fa-user-circle icon"></i>
-              <div className="text">Profile</div>
-            </Link>
-          </li>
-          <li className={`item ${path === 'settings' ? 'active' : ''}`}>
-            <Link to='/settings'>
-              <i className="fas fa-cog icon"></i>
-              <div className="text">Change Theme</div>
-            </Link>
-          </li>
-        </ul>
-        <div className={`toggle-button ${this.props.uiStore.menuIsNarrow ? 'right' : 'left'}`} 
-             onClick={this.props.uiStore.widthMenuToggle}>
-          <i className="fas fa-angle-double-right icon"></i>
+      <div>
+        <div className={`b-sidebar-menu ${this.props.uiStore.menuIsOpen ? 'open' : 'closed'}
+             ${this.props.uiStore.menuIsNarrow ? 'narrow' : 'wide'}
+        `}></div>
+        <div className={`b-sidebar-menu fixed ${this.props.uiStore.menuIsOpen ? 'open' : 'closed'}
+          ${this.props.uiStore.menuIsNarrow ? 'narrow' : 'wide'}
+        `}>
+          <ul className="list">
+            <li className={`item ${path === 'profile' ? 'active' : ''}`}>
+              <Link to='/profile'>
+                <i className="fas fa-user-circle icon"></i>
+                <div className="text">Profile</div>
+              </Link>
+            </li>
+            <li className={`item ${path === 'settings' ? 'active' : ''}`}>
+              <Link to='/settings'>
+                <i className="fas fa-cog icon"></i>
+                <div className="text">Change Theme</div>
+              </Link>
+            </li>
+          </ul>
+          <div className={`toggle-button ${this.props.uiStore.menuIsNarrow ? 'right' : 'left'}`} 
+               onClick={this.props.uiStore.widthMenuToggle}>
+            <i className="fas fa-angle-double-right icon"></i>
+          </div>
         </div>
       </div>
     );

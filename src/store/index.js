@@ -1,12 +1,12 @@
 import UiStore from './uiStore';
-import auth from './auth';
-import UserProfileController from '../components/Profile/controller';
+import Auth from './auth';
+import ProfileStore from './profile';
 
 class RootStore {
     constructor() {
         this.uiStore = new UiStore(this);
-        this.userProfileController = new UserProfileController(this);
-        this.auth = auth;
+        this.profileStore = new ProfileStore(this);
+        this.auth = new Auth(this);
     }
 }
 

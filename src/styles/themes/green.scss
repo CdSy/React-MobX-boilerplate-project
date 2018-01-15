@@ -1,7 +1,7 @@
 @import '../variables.scss';
 
 body.green {
-    .b-sidebar-menu {
+    .b-sidebar-menu.fixed {
         background-color: $green-accent-color;
         box-shadow: 1px 0px 6px 0 $green-shadow-color;
     

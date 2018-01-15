@@ -20,6 +20,7 @@
     .item {
         display: block;
         width: 100%;
+        margin-bottom: 10px;
 
         a {
             display: flex;
@@ -53,6 +54,13 @@
         &.left {
             transform: rotate(180deg);
         }
+    }
+
+    &.fixed {
+        position: fixed;
+        left: 0;
+        top: 50px;
+        z-index: 1;
     }
 
     &.narrow {

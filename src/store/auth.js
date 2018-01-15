@@ -3,6 +3,10 @@ import auth0 from 'auth0-js';
 import browserHistory from '../history';
 
 class Auth {
+  constructor(rootStore) {
+    this.rootStore = rootStore;
+  }
+
   @observable isAuth = false;
   
   auth0 = new auth0.WebAuth({
@@ -11,7 +15,7 @@ class Auth {
     redirectUri: 'http://localhost:3000/callback',
     audience: 'https://cdsy.auth0.com/userinfo',
     responseType: 'token id_token',
-    scope: 'openid'
+    scope: 'openid profile'
   });
 
   @action.bound
@@ -25,6 +29,7 @@ class Auth {
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult);
         this.checkToken();
+        this.rootStore.profileStore.getProfile();
         browserHistory.replace('/');
       } else if (err) {
         browserHistory.replace('/');
@@ -59,9 +64,13 @@ class Auth {
     let expiresAt = JSON.parse(localStorage.getItem('expires_at'));
 
     this.isAuth = new Date().getTime() < expiresAt;
+
+    if(this.isAuth === true) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
   }
 }
 
-const auth = new Auth();
-
-export default auth;
+export default Auth;

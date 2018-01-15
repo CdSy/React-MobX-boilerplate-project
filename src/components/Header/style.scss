@@ -17,6 +17,15 @@ $scale: 0.45;
     box-sizing: border-box;
     z-index: 2;
     transition: background-color $transition-time $ease-func;
+
+    .flex-container {
+        display: flex;
+        align-items: center;
+
+        .auth-btn {
+            margin-left: 20px;
+        }
+    }
 }
 
 .b-menu-toggle {

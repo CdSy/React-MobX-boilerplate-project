@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
+import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import MenuButton from './MenuButton';
 import './style.css';
 
-@inject("uiStore", "auth")
+@inject("uiStore", "auth", "profileStore")
 @observer
 class Header extends Component {
   componentDidMount = () => {
-    this.props.auth.checkToken();
+    this.props.auth.checkToken()
+    .then(() => this.props.profileStore.getProfile())
+    .catch(() => console.log('no auth'));
   }
   
   login() {
@@ -28,7 +31,7 @@ class Header extends Component {
           !this.props.auth.isAuthenticated && (
             <Button
               bsStyle="primary"
-              className="btn-margin"
+              className="auth-btn"
               onClick={() => this.login()}
             >
               Log In
@@ -37,13 +40,20 @@ class Header extends Component {
         }
         {
           this.props.auth.isAuthenticated && (
-            <Button
-              bsStyle="primary"
-              className="btn-margin"
-              onClick={() => this.logout()}
-            >
-              Log Out
-            </Button>
+            <div className="flex-container">
+              <Link to="/profile">
+                <div className="g-user-avatar small">
+                  <img src={this.props.profileStore.form.picture} className="image" alt="avatar"/>
+                </div>
+              </Link>
+              <Button
+                bsStyle="primary"
+                className="auth-btn"
+                onClick={() => this.logout()}
+              >
+                Log Out
+              </Button>
+            </div>
           )
         }
         </div>

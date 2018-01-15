@@ -1,7 +1,7 @@
 @import '../variables.scss';
 
 body.dark {
-    .b-sidebar-menu {
+    .b-sidebar-menu.fixed {
         background-color: $dark-accent-color;
         box-shadow: 1px 0px 6px 0 $dark-shadow-color;
     
