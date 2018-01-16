@@ -8,7 +8,7 @@ import './style.css';
 class Menu extends Component {
   render() {
     const { location } = this.props.routing;
-    const path = location.pathname.slice(1);
+    const path = location.pathname;
 
     return (
       <div>
@@ -19,13 +19,19 @@ class Menu extends Component {
           ${this.props.uiStore.menuIsNarrow ? 'narrow' : 'wide'}
         `}>
           <ul className="list">
-            <li className={`item ${path === 'profile' ? 'active' : ''}`}>
+            <li className={`item ${path === '/' ? 'active' : ''}`}>
+              <Link to='/'>
+                <i className="fas fa-home icon"></i>
+                <div className="text">Home</div>
+              </Link>
+            </li>
+            <li className={`item ${path === '/profile' ? 'active' : ''}`}>
               <Link to='/profile'>
                 <i className="fas fa-user-circle icon"></i>
                 <div className="text">Profile</div>
               </Link>
             </li>
-            <li className={`item ${path === 'settings' ? 'active' : ''}`}>
+            <li className={`item ${path === '/settings' ? 'active' : ''}`}>
               <Link to='/settings'>
                 <i className="fas fa-cog icon"></i>
                 <div className="text">Change Theme</div>

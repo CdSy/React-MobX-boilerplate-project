@@ -10,20 +10,18 @@ import UserProfile from '../Profile';
 class Main extends Component {
     render() {
         return (
-            <div className="p-content-section">
-                <Switch>
-                    <Route exact path='/' component={Home}/>
-                    <Route path="/profile" render={(props) => (
-                        !this.props.auth.isAuthenticated ? (
-                        <Redirect to="/"/>
-                        ) : (
-                        <UserProfile {...props} />
-                        )
-                    )} />
-                    <Route path='/settings' component={Settings}/>
-                    <Route path='/callback' component={Callback}/>
-                </Switch>
-            </div>
+            <Switch>
+                <Route exact path='/' component={Home}/>
+                <Route path="/profile" render={(props) => (
+                    !this.props.auth.isAuthenticated ? (
+                    <Redirect to="/"/>
+                    ) : (
+                    <UserProfile {...props} />
+                    )
+                )} />
+                <Route path='/settings' component={Settings}/>
+                <Route path='/callback' component={Callback}/>
+            </Switch>
         );
     }
 }

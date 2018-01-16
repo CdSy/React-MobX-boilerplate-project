@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import classNames from 'classnames';
+import animateTransition from "../AnimatedWrapper";
 import FormInput from './FormInput';
 import './style.css';
 
+@animateTransition
 @inject("profileStore")
 @observer
 class UserProfile extends Component {
@@ -19,11 +21,11 @@ class UserProfile extends Component {
   }
 
   render() {
-    const {form, onFieldChange} = this.props.profileStore;
-    const {fields, meta, picture} = form;
+    const {formData, onFieldChange} = this.props.profileStore;
+    const {fields, meta, picture} = formData;
 
     return (
-      <div className="p-pofile-page">
+      <div className="p-profile p-content-section">
         <div className="g-page-title">Profile</div>
         <div className="b-pofile-info">
           <div className="g-user-avatar">
@@ -42,9 +44,7 @@ class UserProfile extends Component {
                        error={fields.name.error}
                        onChange={onFieldChange}
                        placeholder="your name"/>
-
             {meta.error && <div className="error-message"> {meta.error} </div>}
-
             <input disabled={!meta.isValid}
                    className={classNames("g-submit-button", {"hide": !meta.isChange, "disabled": !meta.isValid})}
                    value="Save"

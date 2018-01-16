@@ -15,7 +15,7 @@ class Auth {
     redirectUri: 'http://localhost:3000/callback',
     audience: 'https://cdsy.auth0.com/userinfo',
     responseType: 'token id_token',
-    scope: 'openid profile'
+    scope: 'openid profile user_metadata'
   });
 
   @action.bound

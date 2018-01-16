@@ -1,4 +1,4 @@
-import { observable, action, toJS } from "mobx";
+import { observable, computed, action, toJS } from "mobx";
 import Validator from 'validatorjs';
 
 export default class ProfileStore {
@@ -58,9 +58,9 @@ export default class ProfileStore {
     this.form.fields[field].error = validation.errors.first(field);
   };
 
-  // @computed get form() {
-  //   return this.form;
-  // }
+  @computed get formData() {
+    return this.form;
+  }
 
   getAccessToken() {
     const accessToken = localStorage.getItem('access_token');
@@ -74,6 +74,10 @@ export default class ProfileStore {
 
   @action.bound
   getProfile() {
+    if (!!this.form.picture) {
+      return;
+    }
+
     let accessToken = this.getAccessToken();
 
     this.rootStore.auth.auth0.client.userInfo(accessToken, action("GET_PROFILE_SUCCESS", (err, profile) => {

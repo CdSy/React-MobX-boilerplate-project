@@ -31,13 +31,15 @@ body {
 
 .p-content-section {
     flex-grow: 1;
-    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 1px 8px 0 rgba(32,32,32,0.25);
 }
 
 .g-page-title {
-    margin-bottom: 30px;
+    margin-bottom: 0.3em;
     margin-left: 30px;
     font-size: 22px;
+    line-height: 3em;
 }
 
 .g-submit-button {
@@ -79,4 +81,32 @@ body {
         display: block;
         width: 100%;
     }
+}
+
+.Fade-appear {
+    transform: translateY(100px);
+    opacity: 0;
+}
+.Fade-appear.Fade-appear-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 0.3s ease;
+}
+.Fade-enter {
+    opacity: 0;
+    transform: translateY(100px);
+}
+.Fade-enter.Fade-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 0.2s ease 0.3s;
+}
+.Fade-leave {
+    opacity: 1;
+    transform: translateY(0);
+}
+.Fade-leave.Fade-leave-active {
+    opacity: 0;
+    transform: translateY(100px);
+    transition: all 0.2s ease;
 }

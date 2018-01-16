@@ -1,7 +1,7 @@
 import { observable, computed, action } from "mobx";
 
 export default class UiStore {
-    @observable menuOpen = false;
+    @observable menuOpen = true;
     @observable menuNarrow = false;
     @observable currentTheme = "light";
     themeList = ["light","dark","green","blue"];
