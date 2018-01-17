@@ -5,6 +5,7 @@ import Settings from '../Settings';
 import Callback from '../Callback';
 import Home from '../Home';
 import UserProfile from '../Profile';
+import Statistics from '../Statistics';
 import { TransitionGroup } from 'react-transition-group';
 import { CSSTransition } from 'react-transition-group';
 
@@ -26,6 +27,7 @@ class Main extends Component {
                         <UserProfile {...props} />
                         )
                     )} />
+                    <Route path='/statistics' component={Statistics}/>
                     <Route path='/settings' component={Settings}/>
                     <Route path='/callback' component={Callback}/>
                 </Switch>

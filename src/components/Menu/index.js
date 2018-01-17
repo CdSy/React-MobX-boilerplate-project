@@ -31,6 +31,12 @@ class Menu extends Component {
                 <div className="text">Profile</div>
               </Link>
             </li>
+            <li className={`item ${path === '/statistics' ? 'active' : ''}`}>
+              <Link to='/statistics'>
+                <i className="fas fa-chart-line icon"></i>
+                <div className="text">Statistics</div>
+              </Link>
+            </li>
             <li className={`item ${path === '/settings' ? 'active' : ''}`}>
               <Link to='/settings'>
                 <i className="fas fa-cog icon"></i>
