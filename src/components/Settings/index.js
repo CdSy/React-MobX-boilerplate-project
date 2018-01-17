@@ -1,33 +1,46 @@
 import React, { Component } from 'react';
 import { observer, inject } from "mobx-react";
-import animateTransition from "../AnimatedWrapper";
 import './style.css';
 
-@animateTransition
 @inject("uiStore")
 @observer
 class Settings extends Component {
-  render() {
+  constructor(props) {
+    super(props);
+    this.state = { in: true };
+  }
+
+  componentWillUnmount() {
+    this.setState({in: false});
+  }
+
+  renderCard() {
     return (
-      <div className="p-settings p-content-section">
-        <div className="g-page-title">Available Themes</div>
-        <div className="p-themes-wrapper">
-          {
-            this.props.uiStore.themeList.map((theme, i) => {
-              return (
-                <div className={`b-theme-card ${this.props.uiStore.currentTheme === theme ? 'active' : ''}`} 
-                     onClick={() => this.props.uiStore.changeTheme(theme)}
-                     key={i}>
-                  <div className={`color ${theme}`}>
-                    <i className="fas fa-check-circle icon"></i>
-                  </div>
-                  <div className="name">{theme}</div>
-                </div>
-              );
-            })
-          }
+      this.props.uiStore.themeList.map((theme, i) => {
+        return (
+          <div className={`b-theme-card animated-child ${this.props.uiStore.currentTheme === theme ? 'active' : ''}`} 
+               onClick={() => this.props.uiStore.changeTheme(theme)}
+               key={i}>
+            <div className={`color ${theme}`}>
+              <i className="fas fa-check-circle icon"></i>
+            </div>
+            <div className="name">{theme}</div>
+          </div>
+        );
+      })
+    );
+  }
+
+  render() {
+    const cards = this.renderCard();
+
+    return (
+        <div className="g-card-content">
+          <div className="g-page-title">Available Themes</div>
+          <div className="p-themes-wrapper">
+            {cards}
+          </div>
         </div>
-      </div>
     )
   }
 }

@@ -1,15 +1,23 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import classNames from 'classnames';
-import animateTransition from "../AnimatedWrapper";
+import Fade from '../AnimatedWrapper';
 import FormInput from './FormInput';
 import './style.css';
 
-@animateTransition
 @inject("profileStore")
 @observer
 class UserProfile extends Component {
   defaultPicture = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=blank&f=y';
+  constructor(props) {
+    super(props);
+    this.state = { in: true };
+  }
+  
+  componentWillUnmount() {
+    this.setState({in: false});
+  }
+  
 
   componentDidMount() {
     this.props.profileStore.getProfile();
@@ -25,7 +33,7 @@ class UserProfile extends Component {
     const {fields, meta, picture} = formData;
 
     return (
-      <div className="p-profile p-content-section">
+      <div className="g-card-content">
         <div className="g-page-title">Profile</div>
         <div className="b-pofile-info">
           <div className="g-user-avatar">

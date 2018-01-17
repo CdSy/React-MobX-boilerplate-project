@@ -1,4 +1,5 @@
 @import './variables.scss';
+@import './animations.scss';
 @import './themes/light.scss';
 @import './themes/dark.scss';
 @import './themes/green.scss';
@@ -30,7 +31,13 @@ body {
 }
 
 .p-content-section {
+    position: relative;
+    display: flex;
     flex-grow: 1;
+}
+
+.g-card-content {
+    width: 100%;
     margin: 20px;
     box-shadow: 0 1px 8px 0 rgba(32,32,32,0.25);
 }
@@ -81,32 +88,4 @@ body {
         display: block;
         width: 100%;
     }
-}
-
-.Fade-appear {
-    transform: translateY(100px);
-    opacity: 0;
-}
-.Fade-appear.Fade-appear-active {
-    opacity: 1;
-    transform: translateX(0);
-    transition: all 0.3s ease;
-}
-.Fade-enter {
-    opacity: 0;
-    transform: translateY(100px);
-}
-.Fade-enter.Fade-enter-active {
-    opacity: 1;
-    transform: translateX(0);
-    transition: all 0.2s ease 0.3s;
-}
-.Fade-leave {
-    opacity: 1;
-    transform: translateY(0);
-}
-.Fade-leave.Fade-leave-active {
-    opacity: 0;
-    transform: translateY(100px);
-    transition: all 0.2s ease;
 }
