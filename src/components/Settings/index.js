@@ -5,15 +5,6 @@ import './style.css';
 @inject("uiStore")
 @observer
 class Settings extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { in: true };
-  }
-
-  componentWillUnmount() {
-    this.setState({in: false});
-  }
-
   renderCard() {
     return (
       this.props.uiStore.themeList.map((theme, i) => {

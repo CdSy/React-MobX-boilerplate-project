@@ -10,10 +10,6 @@ import { CSSTransition } from 'react-transition-group';
 
 @inject("auth", "routing")
 class Main extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         const currentKey = this.props.routing.location.pathname.split('/')[1] || '/';
         const timeout = { enter: 700, exit: 300 };

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import classNames from 'classnames';
-import Fade from '../AnimatedWrapper';
 import FormInput from './FormInput';
 import './style.css';
 
@@ -9,15 +8,6 @@ import './style.css';
 @observer
 class UserProfile extends Component {
   defaultPicture = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=blank&f=y';
-  constructor(props) {
-    super(props);
-    this.state = { in: true };
-  }
-  
-  componentWillUnmount() {
-    this.setState({in: false});
-  }
-  
 
   componentDidMount() {
     this.props.profileStore.getProfile();
