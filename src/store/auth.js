@@ -30,7 +30,7 @@ class Auth {
         this.setSession(authResult);
         this.checkToken();
         this.rootStore.profileStore.getProfile();
-        browserHistory.replace('/');
+        browserHistory.replace('/profile');
       } else if (err) {
         browserHistory.replace('/');
         console.log(err);

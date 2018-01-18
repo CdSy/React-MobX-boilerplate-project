@@ -36,3 +36,34 @@
     transform: translateX(0);
     transition: all 0.35s ease 0.4s;
 }
+
+.ReactModal__Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(32, 32, 32, 0.45);
+    z-index: 20;
+    outline: none;
+}
+
+.ReactModal__Content {
+    position: relative;
+    width: 320px;
+    height: 350px;
+    border-radius: 4px;
+    background-color: #fff;
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(100px);
+    transition: opacity 0.25s ease, transform 0.4s ease;
+}
+
+.ReactModal__Content--after-open {
+    opacity: 1;
+    transform: translateY(0);
+}

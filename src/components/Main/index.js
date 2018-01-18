@@ -1,13 +1,22 @@
 import React, { Component } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import { TransitionGroup } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import { inject } from 'mobx-react';
 import Settings from '../Settings';
 import Callback from '../Callback';
 import Home from '../Home';
 import UserProfile from '../Profile';
 import Statistics from '../Statistics';
-import { TransitionGroup } from 'react-transition-group';
-import { CSSTransition } from 'react-transition-group';
+import Login from '../Login';
+
+const AnimatedRedirect = (props) => {
+    return (
+        <div className="redirect-wrapper">
+            <Redirect {...props}/>
+        </div>
+    )
+}
 
 @inject("auth", "routing")
 class Main extends Component {
@@ -22,13 +31,14 @@ class Main extends Component {
                     <Route exact path='/' component={Home}/>
                     <Route path="/profile" render={(props) => (
                         !this.props.auth.isAuthenticated ? (
-                        <Redirect to="/"/>
+                        <AnimatedRedirect to="/login" />
                         ) : (
                         <UserProfile {...props} />
                         )
                     )} />
                     <Route path='/statistics' component={Statistics}/>
                     <Route path='/settings' component={Settings}/>
+                    <Route path='/login' component={Login}/>
                     <Route path='/callback' component={Callback}/>
                 </Switch>
                 </CSSTransition>

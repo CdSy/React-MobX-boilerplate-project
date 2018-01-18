@@ -6,6 +6,18 @@ export default class UiStore {
     @observable currentTheme = "light";
     themeList = ["light","dark","green","blue"];
 
+    @observable loginModal = {isOpen: false};
+
+    @action.bound
+    closeModal(name) {
+        this[name].isOpen = false;
+    }
+
+    @action.bound
+    openModal(name) {
+        this[name].isOpen = true;
+    }
+
     @computed get menuIsOpen() {
         return this.menuOpen;
     }
