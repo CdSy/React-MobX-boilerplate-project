@@ -1,0 +1,28 @@
+.list-wrapper {
+    margin-left: 30px;
+    margin-bottom: 30px;
+
+    .form {
+        display: flex;
+        margin: 30px 0;
+
+        .form-input__field {
+            margin-right: 20px;
+        }
+    }
+
+    .item {
+        position: relative;
+        width: 400px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        padding: 15px 20px;
+        box-shadow: 0 1px 8px 0 rgba(60, 60, 60, 0.25);
+
+        .delete-button {
+            position: absolute;
+            right: 8px;
+            top: 14px;
+        }
+    }
+}

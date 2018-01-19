@@ -1,6 +1,36 @@
 @import '../variables.scss';
 
 body.blue {
+    .ReactModal__Content {
+        background: $blue-accent-color !important;
+        color: #fff !important;
+
+        svg {
+            color: #fff !important;
+        }
+    }
+
+    .btn-primary {
+        color: #000;
+        background-color: #ffffff;
+        border-color: #ffffff;
+
+        &:focus {
+            outline: none;
+        }
+
+        &:hover {
+            color: #000;
+            background-color: darken(#ffffff, 5%);
+            border-color: #ffffff;
+        }
+
+        &.theme-style {
+            background-color: $blue-accent-color;
+            color: #fff;
+        }
+    }
+
     .b-sidebar-menu.fixed {
         background-color: $blue-accent-color;
         box-shadow: 1px 0px 6px 0 $blue-shadow-color;

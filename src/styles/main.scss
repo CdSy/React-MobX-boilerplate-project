@@ -21,6 +21,10 @@ body {
     color: black;
     background: #fff;
     -webkit-font-smoothing: antialiased;
+
+    a:focus {
+        outline: none;
+    }
 }
 
 .App {
@@ -91,5 +95,37 @@ body {
     .image {
         display: block;
         width: 100%;
+    }
+}
+
+.form-input {
+    display: block;
+    width: 250px;
+    margin-bottom: 25px;
+
+    &--error {
+        .form-input__field {
+            box-shadow: 0 0 0 1px rgba(168, 56, 56, 0.6);
+        }
+
+        .form-input__error {
+            display: block;
+        }
+    }
+
+    &__field {
+        display: block;
+        border-radius: 4px;
+        border: none;
+        outline: none;
+        padding: 10px 15px;
+        box-shadow: 0 0 0 1px rgba(32, 32, 32, 0.25);
+    }
+
+    &__error {
+        margin-top: 3px;
+        font-size: 12px;
+        color: rgb(168, 56, 56);
+        display: none;
     }
 }

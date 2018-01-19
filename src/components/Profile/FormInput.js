@@ -13,7 +13,7 @@ const FormInput = (props) => (
              placeholder={props.placeholder}
              type={props.type || 'text'}
              className="form-input__field"
-             onChange={(e) => props.onChange(e.target.name, e.target.value)}/>
+             onChange={(event) => props.onChange(event.target.name, event.target.value)}/>
       {props.error && <div className="form-input__error">{props.error}</div> }
     </div>
 );

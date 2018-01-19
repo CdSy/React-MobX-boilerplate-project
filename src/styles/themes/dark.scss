@@ -1,6 +1,36 @@
 @import '../variables.scss';
 
 body.dark {
+    .ReactModal__Content {
+        background: rgb(53, 52, 52) !important;
+        color: #fff !important;
+    }
+
+    .ReactModal__Overlay {
+        background-color: rgba(50, 50, 50, 0.65) !important;
+    }
+
+    .btn-primary {
+        color: #000;
+        background-color: #ffffff;
+        border-color: #ffffff;
+
+        &:focus {
+            outline: none;
+        }
+
+        &:hover {
+            color: #000;
+            background-color: darken(#ffffff, 5%);
+            border-color: #ffffff;
+        }
+
+        &.theme-style {
+            background-color: $dark-accent-color;
+            color: #fff;
+        }
+    }
+
     .b-sidebar-menu.fixed {
         background-color: $dark-accent-color;
         box-shadow: 1px 0px 6px 0 $dark-shadow-color;
