@@ -10,6 +10,7 @@ import UserProfile from '../Profile';
 import Statistics from '../Statistics';
 import Login from '../Login';
 import Employees from '../Employees';
+import Slider from '../Slider';
 
 const AnimatedRedirect = (props) => {
     return (
@@ -40,6 +41,7 @@ class Main extends Component {
                     <Route path='/statistics' component={Statistics}/>
                     <Route path='/settings' component={Settings}/>
                     <Route path='/employees' component={Employees}/>
+                    <Route path='/gallery' component={Slider}/>
                     <Route path='/login' component={Login}/>
                     <Route path='/callback' component={Callback}/>
                 </Switch>

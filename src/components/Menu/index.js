@@ -49,6 +49,12 @@ class Menu extends Component {
                 <div className="text">Employees</div>
               </Link>
             </li>
+            <li className={`item ${path === '/gallery' ? 'active' : ''}`}>
+              <Link to='/gallery'>
+                <i className="far fa-images icon"></i>
+                <div className="text">Gallery</div>
+              </Link>
+            </li>
           </ul>
           <div className={`toggle-button ${this.props.uiStore.menuIsNarrow ? 'right' : 'left'}`} 
                onClick={this.props.uiStore.widthMenuToggle}>
