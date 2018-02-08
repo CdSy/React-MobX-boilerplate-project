@@ -14,13 +14,13 @@ class Slider extends Component {
   ];
   state = {
     cards: [
-      {className: "odd", animKey: "1"},
-      {className: "even", animKey: "2"},
-      {className: "odd", animKey: "3"},
-      {className: "even", animKey: "c"},
-      {className: "odd", animKey: "4"},
-      {className: "even", animKey: "5"},
-      {className: "odd", animKey: "6"},
+      {className: "odd", animKey: "1", price: "792"},
+      {className: "even", animKey: "2", price: "564"},
+      {className: "odd", animKey: "3", price: "850"},
+      {className: "even", animKey: "c", price: "940"},
+      {className: "odd", animKey: "4", price: "430"},
+      {className: "even", animKey: "5", price: "355"},
+      {className: "odd", animKey: "6", price: "820"},
     ],
     offset: 0
   }
@@ -81,7 +81,18 @@ class Slider extends Component {
                   <div className={`card ${card.className} ${card.animKey}`} key={i}>
                     {i}
                     <div className="card-popover">
-                      Text
+                      <div className="price-wrapper">
+                        <i className="fas fa-shopping-cart cart-icon"></i>
+                        <div className="price">
+                          <div className="old">{`$${card.price}`}</div>
+                          <div className="new">$0</div>
+                        </div>
+                      </div>
+                      <div className="button">
+                        <div className="text">Try for free</div>
+                        <div className="loader"><i className="fas fa-spinner icon"></i></div>
+                        <div className="checked"><i className="fas fa-check"></i></div>
+                      </div>
                       <div className="arrow"></div>
                     </div>
                   </div>

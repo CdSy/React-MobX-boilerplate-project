@@ -51,6 +51,73 @@
                 opacity: 0;
                 text-align: center;
 
+                .price-wrapper {
+                    display: flex;
+                    justify-content: space-between;
+
+                    .cart-icon {
+                        width: 0.8em;
+                    }
+
+                    .price {
+                        margin-top: 1px;
+                        font-size: 10px;
+                        transition: transform 0.3s ease;
+
+                        .old {
+                            opacity: 1;
+                            transition: opacity 0.2s ease;
+                        }
+
+                        .new {
+                            opacity: 0;
+                            transition: opacity 0.2s ease;
+                        }
+                    }
+                }
+
+                .button {
+                    position: relative;
+                    width: 100%;
+                    height: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 3px;
+                    font-size: 10px;
+                    color: white;
+                    line-height: 8px;
+                    text-align: center;
+                    background-color: rgb(19, 207, 170);
+
+                    .text {
+                        opacity: 1;
+                        transition: all 0.2s 1s linear;
+                    }
+
+                    .loader,
+                    .checked {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transition: all 0.2s 1s linear;
+                        transform: translate(-50%, -50%);
+                        opacity: 0;
+                    }
+
+                    .checked {
+                        transform: translate(-50%, -50%) scale(0);
+                    }
+
+                    .loader {
+                        opacity: 0;
+
+                        .icon {
+                            animation: rotateLoader 0.6s linear infinite;
+                        }
+                    }
+                }
+
                 .arrow {
                     position: absolute;
                     margin-left: 50%;
@@ -105,15 +172,61 @@
                     transform: translate(-50%, -100%) scale(1);
                     transition: all 0.3s 0.4s ease;
                 }
+
+                .button {
+                    .text {
+                        transition: all 0.25s ease;
+                        transition-delay: 1s;
+                        opacity: 0;
+                        transform: scale(0);
+                    }
+                }
             }
             
             &.cl {
                 transform: translateX(120px) scale(1);
                 opacity: 1;
 
+                .price-wrapper {
+                    .price {
+                        transform: translateY(-50%);
+                        transition-delay: 1.5s;
+
+                        .old {
+                            opacity: 0;
+                            transition-delay: 1.5s;
+                        }
+
+                        .new {
+                            opacity: 1;
+                            transition-delay: 1.5s ;
+                        }
+                    }
+                }
+
                 .card-popover {
                     opacity: 1;
                     transform: translate(-50%, -100%) scale(1);
+                }
+
+                .button {
+                    transition: all 0.2s 0.4s ease;
+
+                    .loader {
+                        animation: fadeIn 1.4s ease;
+                    }
+
+                    .checked {
+                        transition: all 0.3s 1.6s ease;
+                        opacity: 1;
+                        transform: translate(-50%, -50%) scale(1);
+                    }
+
+                    .text {
+                        transition: all 0.25s 0.4s ease;
+                        opacity: 0;
+                        transform: scale(0);
+                    }
                 }
             }
 
@@ -132,5 +245,26 @@
                 opacity: 0;
             }
         }
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes rotateLoader {
+    0% {
+        transform: rotateZ(-360deg);
+    }
+    100% {
+        transform: rotateZ(0deg);
     }
 }
