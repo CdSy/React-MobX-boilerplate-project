@@ -3,11 +3,17 @@ import { observer, inject } from "mobx-react";
 import { TransitionGroup } from 'react-transition-group';
 import { CSSTransition } from 'react-transition-group';
 import { Button } from 'react-bootstrap';
+// import Clock from 'clock3d';
+// import 'clock3d/style.css';
 import './style.css';
 
 @inject("employeesStore")
 @observer
 class Employees extends Component {
+  // componentDidMount() {
+  //   this.clock = new Clock({root: this.clock, perspective: true, direction: "up"});
+  // }
+
   render() {
     const { employees, newEmployee, addEmployee, deleteEmployee, onChangeField } = this.props.employeesStore;
     const timeout = { enter: 300, exit: 300 };
@@ -22,6 +28,7 @@ class Employees extends Component {
       <div className="g-card-content">
         <div className="g-page-title">Employees</div>
         <div className="list-wrapper">
+          <div className="clock" ref={(el) => this.clock = el}></div>
           <form className="form">
             <input value={newEmployee.name}
               name="name"

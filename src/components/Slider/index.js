@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './style.css';
 
 class Slider extends Component {
+  timeout = null;
+  timeout2 = null;
   duration =  5000;
   animKeys = [
     "left1",
@@ -40,7 +42,9 @@ class Slider extends Component {
 
     this.setState({offset, cards: copiedCards});
 
-    setTimeout(() => {
+    clearTimeout(this.timeout2);
+    this.timeout2 = null;
+    this.timeout2 = setTimeout(() => {
       const copiedCards = [...this.state.cards];
       
       copiedCards.forEach((card, i) => {
@@ -56,7 +60,9 @@ class Slider extends Component {
       this.setState({cards: copiedCards});
     }, this.duration / 3);
 
-    setTimeout(() => {
+    clearTimeout(this.timeout);
+    this.timeout = null;
+    this.timeout = setTimeout(() => {
       this.startAnimation();
     }, this.duration);
   }
@@ -69,6 +75,15 @@ class Slider extends Component {
     return sortedKeys;
   }
 
+  moveCards(index) {
+    clearTimeout(this.timeout);
+    this.timeout = null;
+    clearTimeout(this.timeout2);
+    this.timeout2 = null;
+    this.setState({offset: index});
+    this.startAnimation();
+  }
+
   render() {
     return (
       <div className="g-card-content padding-offset">
@@ -78,7 +93,7 @@ class Slider extends Component {
             <div className="slide-wrapper">
               {this.state.cards.map((card, i) => {
                 return (
-                  <div className={`card ${card.className} ${card.animKey}`} key={i}>
+                  <div className={`card ${card.className} ${card.animKey}`} key={i} onClick={() => this.moveCards(i)}>
                     {i}
                     <div className="card-popover">
                       <div className="price-wrapper">

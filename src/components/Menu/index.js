@@ -49,6 +49,12 @@ class Menu extends Component {
                 <div className="text">Employees</div>
               </Link>
             </li>
+            <li className={`item ${path === '/upload' ? 'active' : ''}`}>
+              <Link to='/upload'>
+                <i className="fas fa-upload icon"></i>
+                <div className="text">Upload Files</div>
+              </Link>
+            </li>
             <li className={`item ${path === '/gallery' ? 'active' : ''}`}>
               <Link to='/gallery'>
                 <i className="far fa-images icon"></i>
