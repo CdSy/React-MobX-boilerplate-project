@@ -1,12 +1,15 @@
 import sha1 from 'sha1';
+import DBManager from './dbManager';
 
 const window = self;
-// window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB,
-// IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.OIDBTransaction || window.msIDBTransaction;
+const indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.OIndexedDB || self.msIndexedDB;
+const IDBTransaction = self.IDBTransaction || self.webkitIDBTransaction || self.msIDBTransaction;
+const IDBKeyRange = self.IDBKeyRange || self.webkitIDBKeyRange || self.msIDBKeyRange;
 
 class WorkersManager {
   constructor() {
     this.subWorkers = {};
+    this.DB = new DBManager();
     this.bindEvents();
     this.initialize();
   }
@@ -16,24 +19,31 @@ class WorkersManager {
   }
 
   initialize() {
+    this.DB.getStorage((rows) => {
+      const ids = rows.map((row) => row.id);
+
+      this.refreshUploadedFiles(ids);
+    });
   }
 
   postMessage = (data) => {
     window.postMessage(data);
   }
 
+  onMessage = (message) => {
+    this[message.data.event](message.data.payload);
+  }
+  
   refreshUploadedFiles = (data) => {
     this.postMessage({payload: data, event: "refreshUploadedFiles"});
   }
 
-  onMessage = (event) => {
-    const data = event.data.map((file) => {
+  setFiles = (files) => {
+    files.forEach((file) => {
       const fileId = sha1(file.name + '-' + file.size + '-' + +file.lastModifiedDate);
 
-      return fileId;
+      this.DB.setFile({id: fileId, data: file});
     });
-
-    this.refreshUploadedFiles(data);
   }
 }
 

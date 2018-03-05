@@ -41,7 +41,11 @@ class Uploader {
       }
     });
 
-    (post.length && this.state.workerManager.postMessage(post));
+    (post.length && this.postMessage({payload: post, event: 'setFiles'}));
+  }
+
+  postMessage = (data) => {
+    this.state.workerManager.postMessage(data);
   }
 
   onMessage = (message) => {
@@ -49,9 +53,9 @@ class Uploader {
   }
 
   refreshUploadedFiles(hashArray) {
-    this.state.uploadedFiles = [...new Set(this.state.uploadedFiles, hashArray)];
+    this.state.uploadedFiles = [...new Set([...this.state.uploadedFiles, ...hashArray])];
 
-    console.log(this.state.uploadedFiles);
+    console.log(this.state.uploadedFiles, "uploaded");
   }
 }
 

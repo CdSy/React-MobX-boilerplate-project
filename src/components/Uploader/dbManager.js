@@ -12,8 +12,10 @@ export default class DBManager {
     }
 
     request.onupgradeneeded = (event) => {
-      event.currentTarget.result.createObjectStore(this.storeName);
-      connectDB(func);
+      const db = event.target.result;
+
+      db.createObjectStore(this.storeName, {keyPath: "id"});
+      this.connectDB(func);
     }
   }
 
