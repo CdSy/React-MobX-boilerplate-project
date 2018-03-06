@@ -11,9 +11,11 @@ export class File {
 }
 
 class Uploader {
-  constructor() {
+  constructor({onProgress, ...params}) {
     this.state.workerManager = new Worker();
     this.state.workerManager.onmessage = this.onMessage;
+    this.postMessage({payload: params, event: 'setParams'});
+    this.onProgress = onProgress;
   }
 
   state = {
@@ -32,7 +34,7 @@ class Uploader {
     const post = [];
 
     files.forEach((file) => {
-      const fileId = sha1(file.name + '-' + file.size + '-' + +file.lastModifiedDate);
+      const fileId = sha1(file.name + '-' + file.size + '-' + +file.lastModified);
       const isContain = this.state.uploadedFiles.findIndex((identifier) => identifier === fileId);
 
       if (isContain === -1) {
@@ -54,8 +56,6 @@ class Uploader {
 
   refreshUploadedFiles(hashArray) {
     this.state.uploadedFiles = [...new Set([...this.state.uploadedFiles, ...hashArray])];
-
-    console.log(this.state.uploadedFiles, "uploaded");
   }
 }
 

@@ -6,7 +6,12 @@ import Uploader from './Uploader';
 @inject("uploaderStore")
 @observer
 class UploaderProvider extends Component {
-  uploader = new Uploader({onChange: this.onChange});
+  uploader = null;
+
+  componentDidMount = () => {
+    this.uploader = new Uploader({onProgress: this.onProgress, ...this.props.params});
+  }
+  
 
   getChildContext = () => {
     return { 
@@ -33,9 +38,10 @@ class UploaderProvider extends Component {
     this.uploader.stop(index);
   }
 
-  onChange = (filesState) => {
+  onProgress = (filesState) => {
     const { setChangedState } = this.props.uploaderStore;
 
+    console.log(filesState);
     setChangedState(filesState);
   }
 

@@ -1,3 +1,4 @@
+import SubWorker from './fileSender';
 import sha1 from 'sha1';
 import DBManager from './dbManager';
 
@@ -10,20 +11,12 @@ class WorkersManager {
   constructor() {
     this.subWorkers = {};
     this.DB = new DBManager();
+    this.params = null;
     this.bindEvents();
-    this.initialize();
   }
 
-  bindEvents() {
+  bindEvents = () => {
     window.onmessage = this.onMessage;
-  }
-
-  initialize() {
-    this.DB.getStorage((rows) => {
-      const ids = rows.map((row) => row.id);
-
-      this.refreshUploadedFiles(ids);
-    });
   }
 
   postMessage = (data) => {
@@ -33,6 +26,22 @@ class WorkersManager {
   onMessage = (message) => {
     this[message.data.event](message.data.payload);
   }
+
+  initialize = () => {
+    this.DB.getStorage((rows) => {
+      const ids = rows.map((row) => row.id);
+      
+      rows.forEach((row) => {
+        const id = row.id;
+
+        this.subWorkers;
+        this.subWorkers[id] = new SubWorker({onChange: this.onMessage, ...this.params});
+        this.subWorkers[id].postMessage({payload: row, event: 'uploadFile'});
+      });
+
+      this.refreshUploadedFiles(ids);
+    });
+  }
   
   refreshUploadedFiles = (data) => {
     this.postMessage({payload: data, event: "refreshUploadedFiles"});
@@ -40,10 +49,19 @@ class WorkersManager {
 
   setFiles = (files) => {
     files.forEach((file) => {
-      const fileId = sha1(file.name + '-' + file.size + '-' + +file.lastModifiedDate);
+      const fileId = sha1(file.name + '-' + file.size + '-' + +file.lastModified);
 
       this.DB.setFile({id: fileId, data: file});
     });
+  }
+
+  setParams = (params) => {
+    this.params = params;
+    this.initialize();
+  }
+
+  onProgress = (data) => {
+    this.postMessage({payload: data, event: "onProgress"});
   }
 }
 

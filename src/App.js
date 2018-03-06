@@ -10,8 +10,12 @@ class App extends Component {
   }
   
   render() {
+    const params = {
+      chunkSize: 2 * 1024 * 1024,
+    };
+
     return (
-      <Uploader>
+      <Uploader params={params}>
         <div className="App">
           <Header/>
           <div className="app-body">
