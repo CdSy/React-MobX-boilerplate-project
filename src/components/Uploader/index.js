@@ -88,7 +88,7 @@ export function getFileSize(file, decimalPoint) {
 }
 
 export function getFileFormat(file) {
-  const format = file.name.slice(file.name.indexOf('.'));
+  const format = (/[.]/.exec(file.name)) ? /[^.]+$/.exec(file.name) : "not identified";
 
   return format;
 }
