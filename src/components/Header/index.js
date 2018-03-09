@@ -26,7 +26,6 @@ class Header extends Component {
 
   render() {
     const files = this.props.uploaderStore.stateFiles;
-    console.log(files, "HEADER FILES");
 
     return (
       <header className="b-header">

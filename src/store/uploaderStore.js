@@ -39,7 +39,6 @@ export default class UploaderStore {
 
   @action
   uploadFiles = (files) => {
-    console.log(files, 'store');
     this.state.uploadedFiles = [...new Set(files)];
   }
 

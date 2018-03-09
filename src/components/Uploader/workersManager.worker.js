@@ -12,7 +12,9 @@ class WorkersManager {
     this.subWorkers = {};
     this.DB = new DBManager();
     this.params = null;
-    this.stateFiles = {};
+    this.throttle = 3000;
+    this.previousTime = Date.now();
+    this.filesState = {};
     this.bindEvents();
   }
 
@@ -37,7 +39,6 @@ class WorkersManager {
 
         this.subWorkers;
         this.subWorkers[id] = new SubWorker({onChange: this.onMessage, ...this.params}, row);
-        // this.subWorkers[id].postMessage({payload: payload, event: 'uploadFile'});
       });
 
       this.refreshUploadedFiles(ids);
@@ -48,16 +49,36 @@ class WorkersManager {
     this.postMessage({payload: data, event: "refreshUploadedFiles"});
   }
 
-  setFiles = (files) => {
-    files.forEach((file) => {
+  setFiles = (payload) => {
+    const url = payload.url;
+    
+    payload.files.forEach((file) => {
       const fileId = sha1(file.name + '-' + file.size + '-' + +file.lastModified);
+      const fileObject = {id: fileId, data: file, currentChunk: 0};
+      let params = {
+        onChange: this.onMessage,
+        ...this.params
+      };
 
-      this.DB.setFile({id: fileId, data: file, currentChunk: 0});
+      if (url) {
+        params = {...params, url: url};
+      }
+
+      this.DB.setFile(fileObject);
+      this.subWorkers[fileId] = new SubWorker(params, fileObject);
     });
   }
 
-  putFile = (file) => {
+  pauseUpload = (fileId) => {
+    this.subWorkers[fileId].pause();
+  }
 
+  resumeUpload = (fileId) => {
+    this.subWorkers[fileId].resume();
+  }
+
+  stopUpload = (fileId) => {
+    this.subWorkers[fileId].stop();
   }
 
   deleteFile = (file) => {
@@ -66,32 +87,38 @@ class WorkersManager {
 
   setParams = (params) => {
     this.params = params;
+    this.throttle = this.params.mainThrottle || this.throttle;
     this.initialize();
   }
 
-  onProgress = (data) => {
-    this.stateFiles[data.id] = data;
-    const filesArray = this.arrayFrom(this.changeIdKey(this.stateFiles));
-
-    this.DB.putFile({id: data.id, currentChunk: data.currentChunk});
-    this.postMessage({payload: filesArray, event: "onProgress"});
+  onProgress = (data, force) => {
+    this.filesState[data.fileId] = data;
+    const filesArray = this.arrayFrom(this.filesState);
+    const now = Date.now();
+    
+    if ((now - this.previousTime) >= this.throttle) {
+      this.previousTime = now;
+      this.postMessage({payload: filesArray, event: "onProgress"});
+    }
+    
+    if (force) {
+      this.postMessage({payload: filesArray, event: "onProgress"});
+    }
   }
 
   closeFileSender = (data) => {
-    this.onProgress(data);
-    this.deleteFile(data.id);
+    this.onProgress(data, true);
+    this.deleteFile(data.fileId);
 
-    delete this.subWorkers[data.id];
+    delete this.subWorkers[data.fileId];
   }
 
-  changeIdKey = (files) => {
-    for (let key in files) {
-      const {id, ...keys} = files[key];
-
-      files[key] = {fileId: id, ...keys}; 
-    }
-
-    return files;
+  cancelFileSender = (data) => {
+    delete this.filesState[data.fileId];
+    const filesArray = this.arrayFrom(this.filesState);
+    this.postMessage({payload: filesArray, event: "onProgress"});
+    this.deleteFile(data.fileId);
+    delete this.subWorkers[data.fileId];
   }
 
   arrayFrom = (obj) => {

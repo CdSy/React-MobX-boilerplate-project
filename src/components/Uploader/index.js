@@ -15,18 +15,18 @@ class UploaderProvider extends Component {
   getChildContext = () => {
     return { 
       submit: this.submit,
-      start: this.start,
+      resume: this.resume,
       pause: this.pause,
       stop: this.stop,
     };
   }
 
-  submit = (files) => {
-    this.uploader.send(files);
+  submit = (files, url) => {
+    this.uploader.send(files, url);
   }
 
-  start = (index) => {
-    this.uploader.start(index);
+  resume = (index) => {
+    this.uploader.resume(index);
   }
 
   pause = (index) => {
@@ -40,7 +40,6 @@ class UploaderProvider extends Component {
   onProgress = (filesState) => {
     const { setChangedState } = this.props.uploaderStore;
 
-    console.log(filesState);
     setChangedState(filesState);
   }
 
@@ -55,7 +54,7 @@ class UploaderProvider extends Component {
 
 UploaderProvider.wrappedComponent.childContextTypes = {
   submit: PropTypes.func.isRequired,
-  start: PropTypes.func.isRequired,
+  resume: PropTypes.func.isRequired,
   pause: PropTypes.func.isRequired,
   stop: PropTypes.func.isRequired,
 };

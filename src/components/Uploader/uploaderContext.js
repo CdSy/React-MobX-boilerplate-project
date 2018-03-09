@@ -10,7 +10,7 @@ const uploaderContext = (WrappedComponent) => {
 
   ContextProvider.contextTypes = {
     submit: PropTypes.func.isRequired,
-    start: PropTypes.func.isRequired,
+    resume: PropTypes.func.isRequired,
     pause: PropTypes.func.isRequired,
     stop: PropTypes.func.isRequired,
   };

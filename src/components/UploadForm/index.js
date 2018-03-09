@@ -8,6 +8,7 @@ import './style.css';
 @inject("uploaderStore")
 @observer
 class UploadForm extends Component {
+  url = 'ws://localhost:5000/upload';
   state = {
     isValid: false,
     displayError: false
@@ -68,7 +69,7 @@ class UploadForm extends Component {
                       return;
                     }
 
-                    submit(uploadedFiles)
+                    submit(uploadedFiles, this.url);
                   }}>
             Upload
           </button>

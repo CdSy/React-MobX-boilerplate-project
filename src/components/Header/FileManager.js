@@ -58,9 +58,8 @@ class FileManager extends Component {
 
   render() {
     const { file, stop, chooseFile, isActive } = this.props;
-    const { name } = file;
+    const { name, status } = file;
     const progress = ~~(file.progress);
-    console.log(this.state.active);
 
     return (
       <div className={`file-body ${isActive ? "active" : ""}`} onClick={(event) => {
@@ -69,13 +68,28 @@ class FileManager extends Component {
         }}>
         <div className="info">
           <div className="file-name">{name}</div>
-          <div className="file-progress">
-            <div className="inner-bar" style={{transform: `translateX(-${100 - progress}%)`}}></div>
-          </div>
+          <div className="percent">{progress}%</div>
+
+          {status ? (
+              <div className="successful-text">file uploaded successfully</div>
+            ) : (
+              <div className="file-progress">
+                <div className="inner-bar" style={{transform: `translateX(-${100 - progress}%)`}}></div>
+              </div>
+            )
+          }
+
         </div>
         <div className="controls">
-          { this.renderControl() }
-          <div className="icon" onClick={() => stop(file.fileId)}><i className="fas fa-times"></i></div>
+          {status ? (
+              ""
+            ) : (
+              <React.Fragment>
+                {this.renderControl()}
+                <div className="icon" onClick={() => stop(file.fileId)}><i className="fas fa-times"></i></div>
+              </React.Fragment>
+            )
+          }
         </div>
       </div>
     );

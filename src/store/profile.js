@@ -42,7 +42,6 @@ export default class ProfileStore {
   @action.bound
   onSubmit() {
     this.form.meta.isChange = false;
-    console.log('sumbit_form_success');
   }
 
   @action.bound

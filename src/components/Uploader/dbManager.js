@@ -64,7 +64,7 @@ export default class DBManager {
     });
   }
 
-  putFile = (file) => {
+  putFile = (file, updateKey) => {
     this.connectDB((db) => {
       const transaction = db.transaction([this.storeName],"readwrite");
       const objectStore = transaction.objectStore(this.storeName);
@@ -72,8 +72,8 @@ export default class DBManager {
 
       request.onerror = this.logerr;
       request.onsuccess = (event) => {
-        event.target.result.currentChunk = file.currentChunk;
-        objectStore.put(request.result);
+        event.target.result[updateKey] = file[updateKey];
+        objectStore.put(event.target.result);
       }
     });
   }

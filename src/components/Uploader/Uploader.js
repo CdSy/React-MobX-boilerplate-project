@@ -1,15 +1,6 @@
 import Worker from './workersManager.worker.js';
 import sha1 from 'sha1';
 
-export class File {
-  constructor(source) {
-    this.name = source.name;
-    this.lastModified = source.lastModified;
-    this.size = source.size;
-    this.type = source.type;
-  }
-}
-
 class Uploader {
   constructor({onProgress, ...params}) {
     this.state.workerManager = new Worker();
@@ -20,17 +11,22 @@ class Uploader {
 
   state = {
     uploadedFiles: [],
-    stateFiles: [],
     workerManager: null
   };
 
-  start = () => {}
+  resume = (fileId) => {
+    this.postMessage({payload: fileId, event: 'resumeUpload'});
+  }
 
-  pause = () => {}
+  pause = (fileId) => {
+    this.postMessage({payload: fileId, event: 'pauseUpload'});
+  }
 
-  stop = () => {}
+  stop = (fileId) => {
+    this.postMessage({payload: fileId, event: 'stopUpload'});
+  }
 
-  send = (files) => {
+  send = (files, url) => {
     const post = [];
 
     files.forEach((file) => {
@@ -43,7 +39,13 @@ class Uploader {
       }
     });
 
-    (post.length && this.postMessage({payload: post, event: 'setFiles'}));
+    (post.length && this.postMessage({
+      payload: {
+        files: post,
+        url: url
+      },
+      event: 'setFiles'
+    }));
   }
 
   postMessage = (data) => {

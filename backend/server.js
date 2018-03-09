@@ -7,6 +7,8 @@ var io = require('socket.io').listen(server);
 
 var clients = {};
 
+var files = {};
+
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -35,15 +37,38 @@ upload.on('connection', function(client) {
   clients[id].on('send-next-chunk', function(data) {
     var parseData = JSON.parse(data);
     var final = parseData.status;
-    console.log(parseData.numChunck, "chunk");
+    var fileId = parseData.fileId;
+    
+    files[fileId].lastChunk = parseData.numChunck;
+    
+    console.log(parseData.numChunck, "num Chunk");
     console.log(final, "isFinal");
 
     if (final) {
+      delete files[fileId];
       clients[id].emit('send-file-successful', "SUCCESSFUll");
       clients[id].disconnect(true);
     } else {
       clients[id].emit('send-next-chunk-successful', "SUCCESSFUll");
     }
+  });
+
+  clients[id].on('get-last-chunk', function(data) {
+    var fileId = JSON.parse(data).id;
+    var lastChunk = 0;
+
+    if (!files[fileId]) {
+      files[fileId] = {id: fileId, lastChunk: 0};
+    } else {
+      lastChunk = files[fileId].lastChunk;
+    }
+
+    clients[id].emit('get-last-chunk', lastChunk);
+  });
+
+  clients[id].on('cancel-upload', function(fileId) {
+    clients[id].disconnect(true);
+    delete files[fileId];
   });
 
   clients[id].on('messages', function(data) {

@@ -4,19 +4,35 @@ class SubWorker {
   constructor({ onChange, ...params}, file) {
     const defaultParams = {
       chunkSize: 1 * 1024 * 1024,
+      maxConnectionAttempts: 10,
+      fileThrottle: 1000,
+      url: 'ws://localhost:5000/upload',
+      events: {
+        GET_LAST_CHUNK: 'get-last-chunk',
+        SEND_NEXT_CHUNK: 'send-next-chunk',
+        SEND_NEXT_CHUNK_SUCCESS: 'send-next-chunk-successful',
+        SEND_FILE_SUCCESS: 'send-file-successful',
+        CANCEL_UPLOAD: 'cancel-upload',
+      }
     };
 
     this.onMessage = onChange;
     this.socket = null;
     this.file = file;
     this.params = {...defaultParams, ...params};
+    this.events = this.params.events;
     this.fileSize = this.file.data.size,
     this.chunkSize = this.params.chunkSize;
     this.maxChunk = Math.ceil(this.fileSize / this.chunkSize);
-    this.offset = file.currentChunk;
+    this.offset = 0;
     this.start = 0;
     this.end = this.chunkSize;
     this.progress = 0;
+    this.maxConnectionAttempts = this.params.maxConnectionAttempts;
+    this.errorCount = 0;
+    this.throttle = this.params.fileThrottle;
+    this.previousTime = Date.now();
+    this.isSuspended = false;
     this.openSocket();
   }
 
@@ -24,41 +40,58 @@ class SubWorker {
     this[message.event](message.payload);
   }
 
-  uploadFile = () => {
-    this.file = file;
-    this.fileSize = this.file.data.size;
+  pause = () => {
+    this.isSuspended = true;
+  }
+
+  resume = () => {
+    this.isSuspended = false;
+    this.process();
+  }
+
+  stop = () => {
+    this.onMessage({
+      data: {
+        payload: this.createFileObject(false),
+        event: "cancelFileSender"
+      }
+    });
+    this.socket.emit(this.events.CANCEL_UPLOAD, this.file.id);
   }
 
   updateFileState = () => {
-    this.onMessage({
-      data: {
-        payload: {
-          id: this.file.id, 
-          name: this.file.data.name,
-          progress: this.progress, 
-          currentChunk: this.offset,
-          type: this.file.data.type,
-          status: false
-        },
-        event: "onProgress"
-      }
-    });
+    const now = Date.now();
+
+    if ((now - this.previousTime) >= this.throttle) {
+      this.previousTime = now;
+
+      this.onMessage({
+        data: {
+          payload: this.createFileObject(false),
+          event: "onProgress"
+        }
+      });
+    }
   }
 
   closeFileSender = () => {
     this.onMessage({
       data: {
-        payload: {
-          id: this.file.id, 
-          name: this.file.data.name,
-          progress: this.progress, 
-          currentChunk: this.offset,
-          type: this.file.data.type,
-          status: true
-        },
+        payload: this.createFileObject(true),
         event: "closeFileSender"
       }
     });
+  }
+
+  createFileObject = (status) => {
+    return {
+      fileId: this.file.id, 
+      name: this.file.data.name,
+      progress: this.progress, 
+      currentChunk: this.offset,
+      type: this.file.data.type,
+      status: status
+    }
   }
 
   process = () => {
@@ -82,7 +115,7 @@ class SubWorker {
       status: final
     };
 
-    this.socket.emit('send-next-chunk', JSON.stringify(post));
+    this.socket.emit(this.events.SEND_NEXT_CHUNK, JSON.stringify(post));
   }
 
   slice = (file, start, end) => {
@@ -94,44 +127,54 @@ class SubWorker {
   }
 
   openSocket = () => {
-    this.socket = io("ws://localhost:5000/upload");
+    this.socket = io(this.params.url);
 
     this.socket.on('connect', () => {
-      console.log(this.socket.id, "Соединение установлено.");
+      console.log('Socket ID: ' + this.socket.id + ' CONNECTED');
       
+      this.socket.emit(this.events.GET_LAST_CHUNK, JSON.stringify({id: this.file.id}));
+    });
+
+    this.socket.on(this.events.GET_LAST_CHUNK, (data) => {
+      this.offset = data;
+      console.log(this.offset, "GET_LAST_CHUNK_SUCCESS");
       this.process();
     });
 
-    this.socket.on('event', (data) => {
-      console.log("Получены данные " + event.data);
-    });
-
-    this.socket.on('send-next-chunk-successful', (event) => {
-      console.log(event, "send chunk successfull");
+    this.socket.on(this.events.SEND_NEXT_CHUNK_SUCCESS, (event) => {
       this.offset += 1;
       this.progress = (this.offset / this.maxChunk) * 100;
       this.updateFileState();
-      this.process();
-    });
 
-    this.socket.on('send-file-successful', (event) => {
-      this.closeFileSender();
-      console.log(event, "send file successfull");
-    });
-
-    this.socket.on('disconnect', (event) => {
-      console.log(event);
-      if (event.wasClean) {
-        console.log('Соединение закрыто чисто');
-      } else {
-        console.log('Обрыв соединения');
-        // this.socket.open();
+      if (!this.isSuspended) {
+        this.process();
       }
-      console.log('Код: ' + event.code + ' причина: ' + event.reason);
     });
 
-    this.socket.on('error', (error) => {
-      console.log("Ошибка " + (error.message || error));
+    this.socket.on(this.events.SEND_FILE_SUCCESS, (event) => {
+      this.closeFileSender();
+      console.log(event, "SENDING_FILE_SUCCESSFUL");
+    });
+
+    this.socket.on('disconnect', (reason) => {
+      if (reason === 'io server disconnect') {
+        console.log('Connection closed by server');
+      } 
+
+      if (reason === 'transport close') {
+        console.log(this.errorCount + ' attempts - ' + 'Server Crashed');
+
+        if (this.errorCount < this.maxConnectionAttempts) {
+          this.errorCount += 1;
+          this.socket.open();
+        }
+      }
+
+      console.log('Connection closed, reason: ' + reason);
+    });
+
+    this.socket.on('connect_failed', () => {
+      console.log('Connection Failed');
     });
   }
 }
