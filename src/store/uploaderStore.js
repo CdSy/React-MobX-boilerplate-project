@@ -25,6 +25,11 @@ export default class UploaderStore {
     return toJS(this.state.uploadedFiles);
   }
 
+  @computed
+  get stateFiles() {
+    return toJS(this.state.filesState);
+  }
+
   @action
   removeFile = (file) => {
     const index = this.state.uploadedFiles.indexOf(file);
@@ -40,6 +45,7 @@ export default class UploaderStore {
 
   @action
   setChangedState = (changedFileList) => {
-    this.state.filesState = [...changedFileList.map((file) => new File(file))];
+    console.log(changedFileList);
+    this.state.filesState = changedFileList;
   }
 }

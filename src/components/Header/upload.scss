@@ -1,0 +1,156 @@
+$circle-size: 40px;
+$circle-background: #D9D9D9;
+$circle-color: #1291D4;
+$inset-size: 30px;
+$inset-color: #fbfbfb;
+$transition-length: 1s;
+
+.ko-progress-circle {
+	width:  $circle-size;
+  height: $circle-size;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+
+	background-color: $circle-background;
+	border-radius: 50%;
+		.ko-progress-circle__slice, .ko-progress-circle__fill {
+			width:    $circle-size;
+			height:   $circle-size;
+			position: absolute;
+			-webkit-backface-visibility: hidden;
+			transition: transform $transition-length;
+			border-radius: 50%;
+		}
+		.ko-progress-circle__slice {
+			clip: rect(0px, $circle-size, $circle-size, $circle-size/2);
+			.ko-progress-circle__fill {
+				clip: rect(0px, $circle-size/2, $circle-size, 0px);
+				background-color: $circle-color;
+			}
+	}
+	.ko-progress-circle__overlay {
+		width:       $inset-size;
+		height:      $inset-size;
+		position:    absolute;
+		margin-left: ($circle-size - $inset-size)/2;
+		margin-top:  ($circle-size - $inset-size)/2;
+
+		background-color: $inset-color;
+    border-radius: 50%;
+    
+    svg {
+      width: 1.5em;
+      height: 1.5em;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      color: #a965d0;
+      transform: translate(-50%,-50%);
+    }
+	}
+
+	$i: 0;
+	$increment: 180deg / 100;
+	@while $i <= 100 {
+		&[data-progress='#{$i}'] {
+				.ko-progress-circle__slice.full, .ko-progress-circle__fill {
+          transform: rotate($increment * $i);
+				}	
+				.ko-progress-circle__fill.ko-progress-circle__bar {
+					transform: rotate($increment * $i * 2);
+				}
+      $i: $i + 1;
+		}
+	}
+}
+
+.b-uploader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-right: 40px;
+  height: 100%;
+  cursor: pointer;
+
+  .file-list {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    border-radius: 0 0 2px 2px;
+    padding: 10px 0;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(10,10,10,0.2);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+    cursor: default;
+  }
+
+  &.active {
+    .file-list {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .ko-progress-circle {
+      opacity: 1;
+    }
+  }
+
+  .file-body {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+
+    .controls {
+      width: 40px;
+      min-width: 40px;
+      margin-left: 10px;
+      display: flex;
+      justify-content: space-between;
+      color: #a965d0;
+    }
+
+    .info {
+      flex: 1 1 auto;
+    }
+
+    .icon {
+      cursor: pointer;
+    }
+
+    &.active {
+      background-color: rgb(226, 221, 221);
+    }
+  }
+}
+
+.file-progress {
+  position: relative;
+  margin: 5px 0 0;
+  width: 100%;
+  border-radius: 10px;
+  height: 8px;
+  border: 1px solid #2b2931;
+  border-radius: 10px;
+  background-color: #333039;
+  box-shadow: 0 1px 0 #4d4856;
+  overflow: hidden;
+}
+
+.inner-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background-color: #0077c6;
+  border: 1px solid #30a1e1;
+  border-radius: 10px;
+  box-shadow: 0 0 20px -1px #005db9;
+  transform: translateX(-100%);
+  transition: transform 0.15s ease;
+  transform-origin: left;
+}

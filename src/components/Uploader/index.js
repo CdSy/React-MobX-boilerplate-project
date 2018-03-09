@@ -12,7 +12,6 @@ class UploaderProvider extends Component {
     this.uploader = new Uploader({onProgress: this.onProgress, ...this.props.params});
   }
   
-
   getChildContext = () => {
     return { 
       submit: this.submit,

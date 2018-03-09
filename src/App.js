@@ -11,7 +11,7 @@ class App extends Component {
   
   render() {
     const params = {
-      chunkSize: 2 * 1024 * 1024,
+      chunkSize: 1 * 1024 * 1024,
     };
 
     return (

@@ -63,9 +63,23 @@ export default class DBManager {
       }
     });
   }
+
+  putFile = (file) => {
+    this.connectDB((db) => {
+      const transaction = db.transaction([this.storeName],"readwrite");
+      const objectStore = transaction.objectStore(this.storeName);
+      const request = objectStore.get(file.id);
+
+      request.onerror = this.logerr;
+      request.onsuccess = (event) => {
+        event.target.result.currentChunk = file.currentChunk;
+        objectStore.put(request.result);
+      }
+    });
+  }
   
   delFile = (file) => {
-    connectDB((db) => {
+    this.connectDB((db) => {
       const request = db.transaction([this.storeName], "readwrite").objectStore(this.storeName).delete(file);
 
       request.onerror = this.logerr;

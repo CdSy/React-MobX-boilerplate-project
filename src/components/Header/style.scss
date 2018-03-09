@@ -90,7 +90,13 @@ $scale: 0.45;
         }
     }
 }
-  
+
+.button-wrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
   // transition mask
 .path-burger {
     position: absolute;

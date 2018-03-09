@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { observer, inject } from "mobx-react";
-import PropTypes from 'prop-types';
 import UploadedFile from './UploadedFile';
 import uploaderContext from '../Uploader/uploaderContext';
 import './style.css';

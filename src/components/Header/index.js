@@ -3,9 +3,11 @@ import { inject, observer } from 'mobx-react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import MenuButton from './MenuButton';
+import UploadManager from './UploadManager';
 import './style.css';
+import './upload.css';
 
-@inject("uiStore", "auth", "profileStore")
+@inject("uiStore", "auth", "profileStore", "uploaderStore")
 @observer
 class Header extends Component {
   componentDidMount = () => {
@@ -23,10 +25,16 @@ class Header extends Component {
   }
 
   render() {
+    const files = this.props.uploaderStore.stateFiles;
+    console.log(files, "HEADER FILES");
+
     return (
       <header className="b-header">
         <MenuButton isActive={this.props.uiStore.menuIsOpen} clickHandler={this.props.uiStore.stateMenuToggle}/>
-        <div>
+        <div className="button-wrapper">
+          <UploadManager files={files}
+                         openUploader={this.props.uiStore.openUploader}
+                         isActive={this.props.uiStore.uploaderIsOpen}/>
         {
           !this.props.auth.isAuthenticated && (
             <Button

@@ -12,6 +12,7 @@ class WorkersManager {
     this.subWorkers = {};
     this.DB = new DBManager();
     this.params = null;
+    this.stateFiles = {};
     this.bindEvents();
   }
 
@@ -35,8 +36,8 @@ class WorkersManager {
         const id = row.id;
 
         this.subWorkers;
-        this.subWorkers[id] = new SubWorker({onChange: this.onMessage, ...this.params});
-        this.subWorkers[id].postMessage({payload: row, event: 'uploadFile'});
+        this.subWorkers[id] = new SubWorker({onChange: this.onMessage, ...this.params}, row);
+        // this.subWorkers[id].postMessage({payload: payload, event: 'uploadFile'});
       });
 
       this.refreshUploadedFiles(ids);
@@ -51,8 +52,16 @@ class WorkersManager {
     files.forEach((file) => {
       const fileId = sha1(file.name + '-' + file.size + '-' + +file.lastModified);
 
-      this.DB.setFile({id: fileId, data: file});
+      this.DB.setFile({id: fileId, data: file, currentChunk: 0});
     });
+  }
+
+  putFile = (file) => {
+
+  }
+
+  deleteFile = (file) => {
+    this.DB.delFile(file);
   }
 
   setParams = (params) => {
@@ -61,7 +70,38 @@ class WorkersManager {
   }
 
   onProgress = (data) => {
-    this.postMessage({payload: data, event: "onProgress"});
+    this.stateFiles[data.id] = data;
+    const filesArray = this.arrayFrom(this.changeIdKey(this.stateFiles));
+
+    this.DB.putFile({id: data.id, currentChunk: data.currentChunk});
+    this.postMessage({payload: filesArray, event: "onProgress"});
+  }
+
+  closeFileSender = (data) => {
+    this.onProgress(data);
+    this.deleteFile(data.id);
+
+    delete this.subWorkers[data.id];
+  }
+
+  changeIdKey = (files) => {
+    for (let key in files) {
+      const {id, ...keys} = files[key];
+
+      files[key] = {fileId: id, ...keys}; 
+    }
+
+    return files;
+  }
+
+  arrayFrom = (obj) => {
+    const array = [];
+
+    for (let key in obj) {
+      array.push(obj[key]);
+    }
+
+    return array;
   }
 }
 
