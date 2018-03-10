@@ -1,12 +1,13 @@
 var express = require('express');
-var app = express();
-var server = app.listen(5000, function() {
+var app     = express();
+var server  = app.listen(5000, function() {
   console.log("server run on port 5000");
 });
-var io = require('socket.io').listen(server);
+var io      = require('socket.io').listen(server);
+var fs      = require('fs');
+var sha1    = require('sha1');
 
 var clients = {};
-
 var files = {};
 
 app.use(function(req, res, next) {
@@ -27,6 +28,7 @@ var upload = io.of('/upload');
 upload.on('connection', function(client) {  
   console.log(client.conn.id, 'Client connected...');
   var id = client.conn.id;
+  let writeStream;
   
   clients[id] = client;
 
@@ -38,18 +40,41 @@ upload.on('connection', function(client) {
     var parseData = JSON.parse(data);
     var final = parseData.status;
     var fileId = parseData.fileId;
-    
-    files[fileId].lastChunk = parseData.numChunck;
-    
-    console.log(parseData.numChunck, "num Chunk");
-    console.log(final, "isFinal");
+    var chunk = parseData.chunk;
+    var checkSum = sha1(chunk);
+    var hashSumEqual = checkSum = parseData.checkSum;
+    let buff;
 
-    if (final) {
-      delete files[fileId];
-      clients[id].emit('send-file-successful', "SUCCESSFUll");
-      clients[id].disconnect(true);
+    if (hashSumEqual) {
+      buff = Buffer.from(chunk, 'base64');
+      console.log(buff, "__BUFFER__");
+    }
+
+    if (!writeStream) {
+      writeStream = fs.createWriteStream(parseData.name);
+      writeStream.on('finish', () => {  
+        console.log('wrote all data to file');
+
+        delete files[fileId];
+        clients[id].emit('send-file-successful', "SUCCESSFUll");
+        clients[id].disconnect(true);
+      });
+    }
+
+    console.log(parseData.chunkNum, "num Chunk");
+    console.log(final, "isFinal"); 
+
+    if (final && hashSumEqual) {
+      writeStream.write(buff, "binary");
+      writeStream.end();
     } else {
-      clients[id].emit('send-next-chunk-successful', "SUCCESSFUll");
+      if (hashSumEqual) {
+        writeStream.write(buff, "binary");
+        files[fileId].lastChunk = parseData.chunkNum;
+        clients[id].emit('send-next-chunk-successful', "SUCCESSFUll");
+      } else {
+        clients[id].emit('send-chunk-again', parseData.chunkNum);
+      }
     }
   });
 

@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import sha1 from 'sha1';
 
 class SubWorker {
   constructor({ onChange, ...params}, file) {
@@ -13,6 +14,7 @@ class SubWorker {
         SEND_NEXT_CHUNK_SUCCESS: 'send-next-chunk-successful',
         SEND_FILE_SUCCESS: 'send-file-successful',
         CANCEL_UPLOAD: 'cancel-upload',
+        SEND_CHUNK_AGAIN: 'send-chunk-again',
       }
     };
 
@@ -106,16 +108,24 @@ class SubWorker {
 
     const blob = this.slice(this.file.data, this.start, this.end);
     const dataUrl = reader.readAsDataURL(blob);
+    const checkSumBlob = this.getCheckSum(dataUrl);
     const final = this.offset === this.maxChunk;
+    
     const post = {
-      data: dataUrl,
+      chunk: dataUrl,
       fileId: this.file.id,
-      numChunck: this.offset,
+      chunkNum: this.offset,
+      checkSum: checkSumBlob,
       type: this.file.data.type,
+      name: this.file.data.name,
       status: final
     };
 
     this.socket.emit(this.events.SEND_NEXT_CHUNK, JSON.stringify(post));
+  }
+
+  getCheckSum = (blob) => {
+    return sha1(blob);
   }
 
   slice = (file, start, end) => {
@@ -154,6 +164,10 @@ class SubWorker {
     this.socket.on(this.events.SEND_FILE_SUCCESS, (event) => {
       this.closeFileSender();
       console.log(event, "SENDING_FILE_SUCCESSFUL");
+    });
+
+    this.socket.on(this.events.SEND_CHUNK_AGAIN, () => {
+      this.process();
     });
 
     this.socket.on('disconnect', (reason) => {
