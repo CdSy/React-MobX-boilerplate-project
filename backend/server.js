@@ -24,6 +24,7 @@ app.get('/upload', function(req, res,next) {
 });
 
 var upload = io.of('/upload');
+var dir = 
 
 upload.on('connection', function(client) {  
   console.log(client.conn.id, 'Client connected...');
@@ -46,12 +47,12 @@ upload.on('connection', function(client) {
     let buff;
 
     if (hashSumEqual) {
-      buff = Buffer.from(chunk, 'base64');
-      console.log(buff, "__BUFFER__");
+      var base64data = chunk.split('base64,');
+      buff = Buffer.from(base64data[1], 'base64');
     }
 
     if (!writeStream) {
-      writeStream = fs.createWriteStream(parseData.name);
+      writeStream = fs.createWriteStream(__dirname + '/files/' + parseData.name);
       writeStream.on('finish', () => {  
         console.log('wrote all data to file');
 

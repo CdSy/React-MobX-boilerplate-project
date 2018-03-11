@@ -25,7 +25,7 @@ class SubWorker {
     this.events = this.params.events;
     this.fileSize = this.file.data.size,
     this.chunkSize = this.params.chunkSize;
-    this.maxChunk = Math.ceil(this.fileSize / this.chunkSize);
+    this.maxChunk = ~~(this.fileSize / this.chunkSize);
     this.offset = 0;
     this.start = 0;
     this.end = this.chunkSize;

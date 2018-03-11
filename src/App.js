@@ -14,7 +14,7 @@ class App extends Component {
       chunkSize: 1 * 1024 * 1024,
       maxConnectionAttempts: 10,
       fileThrottle: 1000,
-      mainThrottle: 2000,
+      mainThrottle: 1000,
       url: 'ws://localhost:5000/upload',
       events: {
         GET_LAST_CHUNK: 'get-last-chunk',
