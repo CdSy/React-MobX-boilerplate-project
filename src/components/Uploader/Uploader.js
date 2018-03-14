@@ -1,12 +1,13 @@
 import Worker from './workersManager.worker.js';
-import sha1 from 'sha1';
+import crc32 from 'crc32';
 
 class Uploader {
-  constructor({onProgress, ...params}) {
+  constructor({onProgress, onError, ...params}) {
     this.state.workerManager = new Worker();
     this.state.workerManager.onmessage = this.onMessage;
     this.postMessage({payload: params, event: 'setParams'});
     this.onProgress = onProgress;
+    this.onError = onError;
   }
 
   state = {
@@ -30,12 +31,12 @@ class Uploader {
     const post = [];
 
     files.forEach((file) => {
-      const fileId = sha1(file.name + '-' + file.size + '-' + +file.lastModified);
+      const fileId = crc32(file.name + '-' + file.size + '-' + +file.lastModified);
       const isContain = this.state.uploadedFiles.findIndex((identifier) => identifier === fileId);
 
       if (isContain === -1) {
         this.state.uploadedFiles.push(fileId);
-        post.push(file);
+        post.push({id: fileId, data: file});
       }
     });
 

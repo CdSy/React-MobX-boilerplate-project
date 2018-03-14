@@ -73,9 +73,9 @@ $transition-length: 1s;
   cursor: pointer;
 
   .file-list {
-    position: absolute;
-    top: 100%;
-    right: 0;
+    position: fixed;
+    top: 50px;
+    right: 20px;
     width: 300px;
     max-height: 340px;
     min-height: 96px;
@@ -83,7 +83,8 @@ $transition-length: 1s;
     border-radius: 0 0 2px 2px;
     padding: 10px 0;
     background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(10,10,10,0.2);
+    // box-shadow: 0 2px 3px 0 rgba(10,10,10,0.2);
+    box-shadow: 2px 5px 8px 2px rgba(10, 10, 10, 0.25);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease;
@@ -128,6 +129,10 @@ $transition-length: 1s;
         width: 30px;
         font-size: 10px;
       }
+
+      .file-name {
+        word-break: break-all;
+      }
     }
 
     .icon {
@@ -145,12 +150,25 @@ $transition-length: 1s;
   margin: 5px 0 0;
   width: 100%;
   border-radius: 10px;
-  height: 8px;
-  border: 1px solid #2b2931;
+  height: 14px;
   border-radius: 10px;
-  background-color: #333039;
-  box-shadow: 0 1px 0 #4d4856;
+  background-color: #555;
   overflow: hidden;
+
+  .amount {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 9px;
+    font-weight: 500;
+    z-index: 20;
+    color: #fff;
+  }
 }
 
 .inner-bar {
@@ -158,14 +176,13 @@ $transition-length: 1s;
   top: 0;
   left: 0;
   width: 100%;
-  height: 6px;
-  background-color: #0077c6;
-  border: 1px solid #30a1e1;
+  height: 14px;
+  background-color: #49c717;
   border-radius: 10px;
-  box-shadow: 0 0 20px -1px #005db9;
   transform: translateX(-100%);
   transition: transform 0.15s ease;
   transform-origin: left;
+  z-index: 10;
 }
 
 .successful-text {

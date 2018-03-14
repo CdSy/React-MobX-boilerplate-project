@@ -5,7 +5,7 @@ var server  = app.listen(5000, function() {
 });
 var io      = require('socket.io').listen(server);
 var fs      = require('fs');
-var sha1    = require('sha1');
+const { performance } = require('perf_hooks');
 
 var clients = {};
 var files = {};
@@ -24,7 +24,14 @@ app.get('/upload', function(req, res,next) {
 });
 
 var upload = io.of('/upload');
-var dir = 
+
+function write(stream, data, cb) {
+  if (!stream.write(data)) {
+    stream.once('drain', cb);
+  } else {
+    process.nextTick(cb);
+  }
+}
 
 upload.on('connection', function(client) {  
   console.log(client.conn.id, 'Client connected...');
@@ -38,21 +45,25 @@ upload.on('connection', function(client) {
   });
 
   clients[id].on('send-next-chunk', function(data) {
-    var parseData = JSON.parse(data);
-    var final = parseData.status;
-    var fileId = parseData.fileId;
-    var chunk = parseData.chunk;
-    var checkSum = sha1(chunk);
-    var hashSumEqual = checkSum = parseData.checkSum;
-    let buff;
+    const START = "" + data.chunkSize;
+    const END = START.slice(0, START.length / 2);
+    performance.mark(START);
 
-    if (hashSumEqual) {
-      var base64data = chunk.split('base64,');
-      buff = Buffer.from(base64data[1], 'base64');
+    var final = data.isFinal;
+    var fileId = data.fileId;
+    var chunk = data.chunk;
+    console.log(data.chunkSize, chunk.byteLength, "LENGTH");
+    var sizeEqual = data.chunkSize === chunk.byteLength;
+    const options = {
+      highWaterMark: Math.pow(2,16)
+    };
+
+    if (!sizeEqual) {
+      console.log("chunks size not equal");
     }
 
     if (!writeStream) {
-      writeStream = fs.createWriteStream(__dirname + '/files/' + parseData.name);
+      writeStream = fs.createWriteStream(__dirname + '/files/' + data.name, options);
       writeStream.on('finish', () => {  
         console.log('wrote all data to file');
 
@@ -62,19 +73,26 @@ upload.on('connection', function(client) {
       });
     }
 
-    console.log(parseData.chunkNum, "num Chunk");
+    console.log(data.chunkNum, "num Chunk");
     console.log(final, "isFinal"); 
 
-    if (final && hashSumEqual) {
-      writeStream.write(buff, "binary");
-      writeStream.end();
+    if (final && sizeEqual) {
+      write(writeStream, chunk, () => {
+        console.log("last chunk is writed");
+        writeStream.end();
+      });
     } else {
-      if (hashSumEqual) {
-        writeStream.write(buff, "binary");
-        files[fileId].lastChunk = parseData.chunkNum;
-        clients[id].emit('send-next-chunk-successful', "SUCCESSFUll");
+      if (sizeEqual) {
+        write(writeStream, chunk, () => {
+          performance.mark(END);
+          performance.measure(START + ' to ' + END, START, END);
+          const measure = performance.getEntriesByName(START + ' to ' + END)[0];
+          console.log("Call to doSomething took " + measure.duration + " milliseconds.");
+          files[fileId].lastChunk = data.chunkNum;
+          clients[id].emit('send-next-chunk-successful', "SUCCESSFUll");
+        });
       } else {
-        clients[id].emit('send-chunk-again', parseData.chunkNum);
+        clients[id].emit('send-chunk-again', data.chunkNum);
       }
     }
   });
@@ -101,7 +119,7 @@ upload.on('connection', function(client) {
     clients[id].emit('broad', data);
   });
 
-  clients[id].on('disconnect', function() {
-    delete clients[id];
-  });
+  // clients[id].on('disconnect', function() {
+  //   delete clients[id];
+  // });
 });

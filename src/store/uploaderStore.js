@@ -44,7 +44,6 @@ export default class UploaderStore {
 
   @action
   setChangedState = (changedFileList) => {
-    console.log(changedFileList);
     this.state.filesState = changedFileList;
   }
 }

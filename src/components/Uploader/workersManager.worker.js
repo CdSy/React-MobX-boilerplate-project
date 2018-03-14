@@ -1,5 +1,4 @@
 import SubWorker from './fileSender';
-import sha1 from 'sha1';
 import DBManager from './dbManager';
 
 const window = self;
@@ -12,7 +11,7 @@ class WorkersManager {
     this.subWorkers = {};
     this.DB = new DBManager();
     this.params = null;
-    this.throttle = 3000;
+    this.throttle = 1000;
     this.previousTime = Date.now();
     this.filesState = {};
     this.bindEvents();
@@ -53,8 +52,6 @@ class WorkersManager {
     const url = payload.url;
     
     payload.files.forEach((file) => {
-      const fileId = sha1(file.name + '-' + file.size + '-' + +file.lastModified);
-      const fileObject = {id: fileId, data: file, currentChunk: 0};
       let params = {
         onChange: this.onMessage,
         ...this.params
@@ -64,8 +61,8 @@ class WorkersManager {
         params = {...params, url: url};
       }
 
-      this.DB.setFile(fileObject);
-      this.subWorkers[fileId] = new SubWorker(params, fileObject);
+      this.DB.setFile(file);
+      this.subWorkers[file.id] = new SubWorker(params, file);
     });
   }
 
@@ -104,6 +101,10 @@ class WorkersManager {
     if (force) {
       this.postMessage({payload: filesArray, event: "onProgress"});
     }
+  }
+
+  onError = (error) => {
+    this.postMessage({payload: error, event: "onError"});
   }
 
   closeFileSender = (data) => {

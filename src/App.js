@@ -11,10 +11,10 @@ class App extends Component {
   
   render() {
     const params = {
-      chunkSize: 1 * 1024 * 1024,
+      chunkSize: 5 * 1024 * 1024,
       maxConnectionAttempts: 10,
-      fileThrottle: 1000,
-      mainThrottle: 1000,
+      fileThrottle: 300,
+      mainThrottle: 300,
       url: 'ws://localhost:5000/upload',
       events: {
         GET_LAST_CHUNK: 'get-last-chunk',
@@ -22,6 +22,7 @@ class App extends Component {
         SEND_NEXT_CHUNK_SUCCESS: 'send-next-chunk-successful',
         SEND_FILE_SUCCESS: 'send-file-successful',
         CANCEL_UPLOAD: 'cancel-upload',
+        SEND_CHUNK_AGAIN: 'send-chunk-again',
       }
     };
 

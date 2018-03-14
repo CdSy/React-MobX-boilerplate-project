@@ -1,5 +1,4 @@
 import io from 'socket.io-client';
-import sha1 from 'sha1';
 
 class SubWorker {
   constructor({ onChange, ...params}, file) {
@@ -24,17 +23,18 @@ class SubWorker {
     this.params = {...defaultParams, ...params};
     this.events = this.params.events;
     this.fileSize = this.file.data.size,
-    this.chunkSize = this.params.chunkSize;
-    this.maxChunk = ~~(this.fileSize / this.chunkSize);
+    this.chunkSize = Math.min(this.params.chunkSize, this.fileSize);
+    this.maxChunk = (~~(this.fileSize / this.chunkSize)) - 1;
     this.offset = 0;
     this.start = 0;
     this.end = this.chunkSize;
     this.progress = 0;
     this.maxConnectionAttempts = this.params.maxConnectionAttempts;
-    this.errorCount = 0;
+    this.errorCount = 1;
     this.throttle = this.params.fileThrottle;
-    this.previousTime = Date.now();
+    this.previousUpdateTime = Date.now();
     this.isSuspended = false;
+    this.updateFileState(false);
     this.openSocket();
   }
 
@@ -64,8 +64,8 @@ class SubWorker {
   updateFileState = () => {
     const now = Date.now();
 
-    if ((now - this.previousTime) >= this.throttle) {
-      this.previousTime = now;
+    if ((now - this.previousUpdateTime) >= this.throttle) {
+      this.previousUpdateTime = now;
 
       this.onMessage({
         data: {
@@ -85,14 +85,25 @@ class SubWorker {
     });
   }
 
+  handleErrorMessage = (error) => {
+    this.onMessage({
+      data: {
+        payload: error,
+        event: "onError"
+      }
+    });
+  }
+
   createFileObject = (status) => {
     return {
-      fileId: this.file.id, 
+      fileId: this.file.id,
       name: this.file.data.name,
-      progress: this.progress, 
+      size: this.file.data.size,
+      passedBytes: this.end,
+      progress: this.progress,
       currentChunk: this.offset,
       type: this.file.data.type,
-      status: status
+      isFinal: status
     }
   }
 
@@ -107,25 +118,21 @@ class SubWorker {
     }
 
     const blob = this.slice(this.file.data, this.start, this.end);
-    const dataUrl = reader.readAsDataURL(blob);
-    const checkSumBlob = this.getCheckSum(dataUrl);
+    const dataUrl = reader.readAsArrayBuffer(blob);
     const final = this.offset === this.maxChunk;
     
     const post = {
       chunk: dataUrl,
       fileId: this.file.id,
       chunkNum: this.offset,
-      checkSum: checkSumBlob,
+      chunkSize: dataUrl.byteLength,
       type: this.file.data.type,
       name: this.file.data.name,
-      status: final
+      isFinal: final
     };
 
-    this.socket.emit(this.events.SEND_NEXT_CHUNK, JSON.stringify(post));
-  }
-
-  getCheckSum = (blob) => {
-    return sha1(blob);
+    this.socket.emit(this.events.SEND_NEXT_CHUNK, post);
+    this.previousSendTime = Date.now();
   }
 
   slice = (file, start, end) => {
@@ -147,11 +154,13 @@ class SubWorker {
 
     this.socket.on(this.events.GET_LAST_CHUNK, (data) => {
       this.offset = data;
-      console.log(this.offset, "GET_LAST_CHUNK_SUCCESS");
+      this.updateFileState();
       this.process();
     });
 
     this.socket.on(this.events.SEND_NEXT_CHUNK_SUCCESS, (event) => {
+      const currentSendTime = Date.now();
+
       this.offset += 1;
       this.progress = (this.offset / this.maxChunk) * 100;
       this.updateFileState();
@@ -162,8 +171,8 @@ class SubWorker {
     });
 
     this.socket.on(this.events.SEND_FILE_SUCCESS, (event) => {
+      this.progress = this.offset > 0 ? (this.offset / this.maxChunk) * 100 : 100;
       this.closeFileSender();
-      console.log(event, "SENDING_FILE_SUCCESSFUL");
     });
 
     this.socket.on(this.events.SEND_CHUNK_AGAIN, () => {
@@ -171,23 +180,59 @@ class SubWorker {
     });
 
     this.socket.on('disconnect', (reason) => {
+      this.handleErrorMessage({
+        fileId: this.file.id,
+        error: {
+          message: 'disconnect',
+          reason: reason
+        }
+      });
+
       if (reason === 'io server disconnect') {
         console.log('Connection closed by server');
       } 
 
       if (reason === 'transport close') {
-        console.log(this.errorCount + ' attempts - ' + 'Server Crashed');
-
-        if (this.errorCount < this.maxConnectionAttempts) {
+        if (this.errorCount <= this.maxConnectionAttempts) {
+          console.log(this.errorCount + ' attempts - ' + 'Server Crashed');
           this.errorCount += 1;
           this.socket.open();
+        } else {
+          this.socket.disconnect(true);
+          console.log('Maximum reconnection attempts');
         }
       }
 
       console.log('Connection closed, reason: ' + reason);
     });
+    
+    this.socket.on ('connect_error', () => {
+      this.handleErrorMessage({
+        fileId: this.file.id,
+        error: {
+          message: 'connect_error',
+          reason: ""
+        }
+      });
+
+      if (this.errorCount <= this.maxConnectionAttempts) {
+        console.log('Server is not responding or unavailable');
+        this.errorCount += 1;
+      } else {
+        this.socket.disconnect(true);
+        console.log('Maximum reconnection attempts');
+      }
+    });
 
     this.socket.on('connect_failed', () => {
+      this.handleErrorMessage({
+        fileId: this.file.id,
+        error: {
+          message: 'connect_failed',
+          reason: ""
+        }
+      });
+
       console.log('Connection Failed');
     });
   }

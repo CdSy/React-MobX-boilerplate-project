@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
+import { getFileSize, getFileName } from '../Uploader/provider';
 
 @observer
 class FileManager extends Component {
@@ -58,7 +59,7 @@ class FileManager extends Component {
 
   render() {
     const { file, stop, chooseFile, isActive } = this.props;
-    const { name, status } = file;
+    const { name, isFinal, size, passedBytes } = file;
     const progress = ~~(file.progress);
 
     return (
@@ -67,13 +68,14 @@ class FileManager extends Component {
           chooseFile(file.fileId);
         }}>
         <div className="info">
-          <div className="file-name">{name}</div>
+          <div className="file-name">{getFileName(name)}</div>
           <div className="percent">{progress}%</div>
 
-          {status ? (
+          {isFinal ? (
               <div className="successful-text">file uploaded successfully</div>
             ) : (
               <div className="file-progress">
+                <div className="amount">{`${getFileSize(passedBytes)}/${getFileSize(size)}`}</div>
                 <div className="inner-bar" style={{transform: `translateX(-${100 - progress}%)`}}></div>
               </div>
             )
@@ -81,7 +83,7 @@ class FileManager extends Component {
 
         </div>
         <div className="controls">
-          {status ? (
+          {isFinal ? (
               ""
             ) : (
               <React.Fragment>
