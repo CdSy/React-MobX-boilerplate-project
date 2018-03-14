@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer, inject } from "mobx-react";
 import Provider from './provider';
 
-@inject("uploaderStore")
+@inject("uploaderStore", "messagesStore")
 @observer
 class UploaderWrapper extends Component {
   onProgress = (filesState) => {
@@ -12,7 +12,9 @@ class UploaderWrapper extends Component {
   }
 
   onError = (error) => {
+    const { setMessage } = this.props.messagesStore;
 
+    setMessage(error);
   }
 
   render() {

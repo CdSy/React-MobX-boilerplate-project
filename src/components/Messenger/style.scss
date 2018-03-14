@@ -1,0 +1,37 @@
+.message-popover {
+    position: fixed;
+    width: 200px;
+    border-radius: 3px;
+    padding: 10px 15px 15px 40px;
+    font-size: 16px;
+    line-height: 16px;
+    color: #000;
+    box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    overflow: hidden;
+    z-index: 200;
+
+    .close-message {
+        position: absolute;
+        right: 4px;
+        top: 4px;
+        color: #000;
+        opacity: 0.3;
+        cursor: pointer;
+
+        .icon {
+            display: block;
+            width: 0.7em;
+            height: 0.7em;
+        }
+    }
+
+    .error-icon {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 1.4em;
+        height: 1.4em;
+        color: #afac12;
+    }
+}

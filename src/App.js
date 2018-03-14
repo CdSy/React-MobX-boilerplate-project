@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Main from './components/Main';
 import Menu from './components/Menu';
 import Uploader from './components/Uploader';
+import Messenger from './components/Messenger';
 
 class App extends Component {
   componentWillMount = () => {
@@ -12,7 +13,7 @@ class App extends Component {
   render() {
     const params = {
       chunkSize: 5 * 1024 * 1024,
-      maxConnectionAttempts: 10,
+      maxConnectionAttempts: 3,
       fileThrottle: 300,
       mainThrottle: 300,
       url: 'ws://localhost:5000/upload',
@@ -29,6 +30,7 @@ class App extends Component {
     return (
       <Uploader params={params}>
         <div className="App">
+          <Messenger/>
           <Header/>
           <div className="app-body">
             <Menu/>

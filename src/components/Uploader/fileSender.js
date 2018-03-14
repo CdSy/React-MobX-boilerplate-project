@@ -180,20 +180,20 @@ class SubWorker {
     });
 
     this.socket.on('disconnect', (reason) => {
-      this.handleErrorMessage({
-        fileId: this.file.id,
-        error: {
-          message: 'disconnect',
-          reason: reason
-        }
-      });
-
       if (reason === 'io server disconnect') {
         console.log('Connection closed by server');
       } 
 
       if (reason === 'transport close') {
         if (this.errorCount <= this.maxConnectionAttempts) {
+          this.handleErrorMessage({
+            identifier: this.file.id,
+            error: {
+              message: 'disconnect',
+              reason: reason
+            }
+          });
+          
           console.log(this.errorCount + ' attempts - ' + 'Server Crashed');
           this.errorCount += 1;
           this.socket.open();
@@ -208,7 +208,7 @@ class SubWorker {
     
     this.socket.on ('connect_error', () => {
       this.handleErrorMessage({
-        fileId: this.file.id,
+        identifier: this.file.id,
         error: {
           message: 'connect_error',
           reason: ""
@@ -226,7 +226,7 @@ class SubWorker {
 
     this.socket.on('connect_failed', () => {
       this.handleErrorMessage({
-        fileId: this.file.id,
+        identifier: this.file.id,
         error: {
           message: 'connect_failed',
           reason: ""

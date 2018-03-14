@@ -1,14 +1,5 @@
 import { observable, computed, action, toJS } from "mobx";
 
-export class File {
-  constructor(source) {
-    this.name = source.name;
-    this.lastModified = source.lastModified;
-    this.size = source.size;
-    this.type = source.type;
-  }
-}
-
 export default class UploaderStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
