@@ -17,9 +17,16 @@ class UploaderWrapper extends Component {
     setMessage(error);
   }
 
+  complete = (file) => {
+    console.log(file.name + 'is completed');
+  }
+
   render() {
     return (
-      <Provider {...this.props} onProgress={this.onProgress} onError={this.onError}/>
+      <Provider {...this.props} 
+                onProgress={this.onProgress} 
+                onError={this.onError} 
+                complete={this.complete}/>
     );
   }
 }

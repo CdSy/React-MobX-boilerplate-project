@@ -83,12 +83,14 @@ upload.on('connection', function(client) {
       });
     } else {
       if (sizeEqual) {
+        files[fileId].write = true;
         write(writeStream, chunk, () => {
           performance.mark(END);
           performance.measure(START + ' to ' + END, START, END);
           const measure = performance.getEntriesByName(START + ' to ' + END)[0];
           console.log("Call to doSomething took " + measure.duration + " milliseconds.");
           files[fileId].lastChunk = data.chunkNum;
+          files[fileId].write = false;
           clients[id].emit('send-next-chunk-successful', "SUCCESSFUll");
         });
       } else {
@@ -112,7 +114,12 @@ upload.on('connection', function(client) {
 
   clients[id].on('cancel-upload', function(fileId) {
     clients[id].disconnect(true);
-    delete files[fileId];
+
+    if (files[fileId].write) {
+      setTimeout(() => {
+        delete files[fileId];
+      }, 500)
+    }
   });
 
   clients[id].on('messages', function(data) {

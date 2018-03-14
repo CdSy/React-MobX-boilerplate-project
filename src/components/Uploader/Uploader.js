@@ -2,12 +2,13 @@ import Worker from './workersManager.worker.js';
 import crc32 from 'crc32';
 
 class Uploader {
-  constructor({onProgress, onError, ...params}) {
+  constructor({onProgress, onError, complete, ...params}) {
     this.state.workerManager = new Worker();
     this.state.workerManager.onmessage = this.onMessage;
     this.postMessage({payload: params, event: 'setParams'});
     this.onProgress = onProgress;
     this.onError = onError;
+    this.complete = complete;
   }
 
   state = {
@@ -54,7 +55,9 @@ class Uploader {
   }
 
   onMessage = (message) => {
-    this[message.data.event](message.data.payload);
+    if (typeof this[message.data.event] === 'function') {
+      this[message.data.event](message.data.payload);
+    }
   }
 
   refreshUploadedFiles(hashArray) {

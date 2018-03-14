@@ -7,8 +7,9 @@ class UploaderProvider extends Component {
 
   componentDidMount = () => {
     this.uploader = new Uploader({
-      onProgress: this.onProgress, 
-      onError:    this.onError, 
+      onProgress: this.props.onProgress, 
+      onError:    this.props.onError,
+      complete:   this.props.complete,
       ...this.props.params
     });
   }
@@ -36,18 +37,6 @@ class UploaderProvider extends Component {
 
   stop = (index) => {
     this.uploader.stop(index);
-  }
-
-  onError = (error) => {
-    const { onError = () => {}} = this.props;
-    
-    onError(error);
-  }
-
-  onProgress = (filesState) => {
-    const { onProgress } = this.props;
-
-    onProgress(filesState);
   }
 
   render() {

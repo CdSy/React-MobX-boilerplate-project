@@ -108,6 +108,7 @@ class WorkersManager {
   }
 
   closeFileSender = (data) => {
+    this.postMessage({payload: data, event: "complete"});
     this.onProgress(data, true);
     this.deleteFile(data.fileId);
 
