@@ -3,7 +3,9 @@ export default class DBManager {
   storeName = "filesStore";
 
   connectDB = (func) => {
-    const request = indexedDB.open(this.dbName, 1);
+    const isFirefox = typeof InstallTrigger !== 'undefined';
+    const options = isFirefox ? { version: 1, storage: "persistent" } : 1;
+    const request = indexedDB.open(this.dbName, options);
 
     request.onerror = this.logger;
 

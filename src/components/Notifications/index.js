@@ -5,7 +5,9 @@ import './style.css';
 
 @inject("messagesStore")
 @observer
-class Messenger extends Component {
+class Notifications extends Component {
+  count = 0;
+
   componentDidMount() {
     this.clearMessages();
   }
@@ -21,7 +23,7 @@ class Messenger extends Component {
         this.props.messagesStore.removeMessage();
         this.clearMessages();
       }
-    }, 3000);
+    }, 5000);
   }
 
   removeMessage = (id) => {
@@ -39,8 +41,8 @@ class Messenger extends Component {
           {
             messages.map((message, index) => {
               const style = {
-                height: "80px",
-                top: (index * (80 + 15)) + 15 + "px",
+                height: "100px",
+                top: (index * (100 + 15)) + 15 + "px",
                 left: "15px"
               };
 
@@ -63,4 +65,4 @@ class Messenger extends Component {
   }
 }
 
-export default Messenger;
+export default Notifications;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 import FileManager from './FileManager';
-import uploaderContext from '../Uploader/uploaderContext';
+import {uploaderContext} from 'react-file-uploader';
 
 @uploaderContext
 @observer
@@ -42,17 +42,17 @@ class UploadManager extends Component {
 
   stop = (fileId) => {
     console.log("stop");
-    this.props.stop(fileId);
+    return this.props.stop(fileId);
   }
 
   pause = (fileId) => {
     console.log("pause");
-    this.props.pause(fileId);
+    return this.props.pause(fileId);
   }
 
   start = (fileId) => {
     console.log("start");
-    this.props.resume(fileId);
+    return this.props.resume(fileId);
   }
 
   getChosenFileProgress = (files) => {

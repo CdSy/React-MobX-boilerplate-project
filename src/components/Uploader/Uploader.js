@@ -1,9 +1,9 @@
-import Worker from './workersManager.worker.js';
+import work from 'webworkify-webpack';
 import crc32 from 'crc32';
 
 class Uploader {
   constructor({onProgress, onError, complete, ...params}) {
-    this.state.workerManager = new Worker();
+    this.state.workerManager = work(require.resolve('./workersManager.worker.js'));
     this.state.workerManager.onmessage = this.onMessage;
     this.postMessage({payload: params, event: 'setParams'});
     this.onProgress = onProgress;
@@ -17,15 +17,33 @@ class Uploader {
   };
 
   resume = (fileId) => {
-    this.postMessage({payload: fileId, event: 'resumeUpload'});
+    const idIsCorrect = this.verifyId(fileId);
+
+    if (idIsCorrect) {
+      this.postMessage({payload: fileId, event: 'resumeUpload'}); 
+    }
+
+    return idIsCorrect;
   }
 
   pause = (fileId) => {
-    this.postMessage({payload: fileId, event: 'pauseUpload'});
+    const idIsCorrect = this.verifyId(fileId);
+
+    if (idIsCorrect) {
+      this.postMessage({payload: fileId, event: 'pauseUpload'});
+    }
+
+    return idIsCorrect;
   }
 
   stop = (fileId) => {
-    this.postMessage({payload: fileId, event: 'stopUpload'});
+    const idIsCorrect = this.verifyId(fileId);
+
+    if (idIsCorrect) {
+      this.postMessage({payload: fileId, event: 'stopUpload'}); 
+    }
+    
+    return idIsCorrect;
   }
 
   send = (files, url) => {
@@ -38,6 +56,14 @@ class Uploader {
       if (isContain === -1) {
         this.state.uploadedFiles.push(fileId);
         post.push({id: fileId, data: file});
+      } else {
+        this.onError({
+          identifier: file.name,
+          error: {
+            message: file.name + ' file already is loading',
+            reason: ""
+          }
+        });
       }
     });
 
@@ -60,8 +86,24 @@ class Uploader {
     }
   }
 
-  refreshUploadedFiles(hashArray) {
+  refreshUploadedFiles = (hashArray) => {
     this.state.uploadedFiles = [...new Set([...this.state.uploadedFiles, ...hashArray])];
+  }
+
+  verifyId = (id) => {
+    const idIsCorrect = this.state.uploadedFiles.some((fileId) => fileId === id);
+    
+    if (!idIsCorrect) {
+      this.onError({
+        identifier: id,
+        error: {
+          message: 'invalid identifier, no such file',
+          reason: ""
+        }
+      });
+    }
+
+    return idIsCorrect;
   }
 }
 

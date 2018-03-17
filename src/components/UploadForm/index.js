@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from "mobx-react";
 import UploadedFile from './UploadedFile';
-import uploaderContext from '../Uploader/uploaderContext';
+import {uploaderContext} from 'react-file-uploader';
 import './style.css';
 
 @uploaderContext

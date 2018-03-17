@@ -3,7 +3,7 @@ import Header from './components/Header';
 import Main from './components/Main';
 import Menu from './components/Menu';
 import Uploader from './components/Uploader';
-import Messenger from './components/Messenger';
+import Notifications from './components/Notifications';
 
 class App extends Component {
   componentWillMount = () => {
@@ -30,7 +30,7 @@ class App extends Component {
     return (
       <Uploader params={params}>
         <div className="App">
-          <Messenger/>
+          <Notifications/>
           <Header/>
           <div className="app-body">
             <Menu/>

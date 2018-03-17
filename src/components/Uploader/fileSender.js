@@ -14,6 +14,7 @@ class SubWorker {
         SEND_FILE_SUCCESS: 'send-file-successful',
         CANCEL_UPLOAD: 'cancel-upload',
         SEND_CHUNK_AGAIN: 'send-chunk-again',
+        ERROR: 'error',
       }
     };
 
@@ -144,7 +145,7 @@ class SubWorker {
   }
 
   openSocket = () => {
-    this.socket = io(this.params.url);
+    this.socket = io(this.params.url, { transports: ['websocket'] });
 
     this.socket.on('connect', () => {
       console.log('Socket ID: ' + this.socket.id + ' CONNECTED');
@@ -193,7 +194,7 @@ class SubWorker {
               reason: reason
             }
           });
-          
+
           console.log(this.errorCount + ' attempts - ' + 'Server Crashed');
           this.errorCount += 1;
           this.socket.open();
@@ -206,7 +207,8 @@ class SubWorker {
       console.log('Connection closed, reason: ' + reason);
     });
     
-    this.socket.on ('connect_error', () => {
+    this.socket.on ('connect_error', (reason) => {
+      console.log(reason);
       this.handleErrorMessage({
         identifier: this.file.id,
         error: {
@@ -234,6 +236,13 @@ class SubWorker {
       });
 
       console.log('Connection Failed');
+    });
+
+    this.socket.on(this.events.ERROR, (error) => {
+      this.handleErrorMessage({
+        identifier: this.file.id,
+        error: error
+      });
     });
   }
 }

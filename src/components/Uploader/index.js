@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer, inject } from "mobx-react";
-import Provider from './provider';
+import {UploaderProvider} from 'react-file-uploader';
 
 @inject("uploaderStore", "messagesStore")
 @observer
@@ -23,7 +23,7 @@ class UploaderWrapper extends Component {
 
   render() {
     return (
-      <Provider {...this.props} 
+      <UploaderProvider {...this.props} 
                 onProgress={this.onProgress} 
                 onError={this.onError} 
                 complete={this.complete}/>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { getFileSize, getFileName, getFileFormat } from '../Uploader/provider';
+import {getFileSize, getFileName, getFileFormat} from 'react-file-uploader';
 
 const UploadedFile = (props) => {
   const { removeFile, file } = props;

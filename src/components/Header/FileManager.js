@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
-import { getFileSize, getFileName } from '../Uploader/provider';
+import {getFileSize, getFileName} from 'react-file-uploader';
 
 @observer
 class FileManager extends Component {
@@ -11,14 +11,17 @@ class FileManager extends Component {
   
   changeState = () => {
     const { file: { fileId }, pause, start } = this.props;
+    let actionSuccessful;
     
     if (this.state.active) {
-      pause(fileId);
+      actionSuccessful = pause(fileId);
     } else {
-      start(fileId);
+      actionSuccessful = start(fileId);
     }
 
-    this.setState({active: !this.state.active});
+    if (actionSuccessful) {
+      this.setState({active: !this.state.active});
+    }
   }
 
   renderControl = () => {
